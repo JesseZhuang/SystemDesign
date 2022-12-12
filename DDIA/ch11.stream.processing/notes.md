@@ -20,3 +20,19 @@ Databases have traditionally not supported notification mechanism well: relation
 
 ## 11.1.1 Messaging Systems
 
+A simple way to implement could be a Unix pipe or TCP connection between producer and consumer. That connects one sender with one recipient. Most messaging systems expand on this basic model. To differentiate, following two questions can be asked:
+
+1. What happens if the producers send messages faster than the consumer can process?
+    1. drop
+    1. buffer in a queue. What happens as the queue grows?
+        1. system crash if out of memory
+        1. write messages to disk. How does disk access affect the performance?
+    1. apply backpressure(flow control, blocking producer from sending). Unix pipes and TCS use backpressure.
+1. What happens if nodes crash or temporarily go offline-are any messages lost? Durability may require some combination of disk writing and/or replication. If can afford to sometimes lose messages, can get higher throughput and lower latency on the same hardware.
+
+Whether message loss is acceptable depends on application. Periodic metrics might be ok to miss afew data points, but counter will be off.
+
+Batch processing system provide a strong reliability with retry and discarding partial failures. Output is same as if no failures occured, which simplify the programming model.
+
+**Direct messaging from producers to consumers**
+
