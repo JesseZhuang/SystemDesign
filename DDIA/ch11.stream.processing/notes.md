@@ -73,4 +73,12 @@ The two patterns can be combined. Two separate groups, each group collectively r
 
 **Acknowledgements and redelivery**
 
+Broker can use ack to avoid processing failures or partial processing.
+
+It is possible that the message was fully processed but the ack was lost in the network. Handling this requires an atomic commit protocol.
+
+The combination of load balancing and redelivery leads to messages being reordered. To avoid, you can use a separate queue per consumer.
+
+## 11.2 Partitioned Logs
+
 
