@@ -64,3 +64,13 @@ The above traditional view of message brokers are in standards like JMS (JSR-343
 
 **Multiple consumers**
 
+When multiple consumers read messages in the same topic, two main patterns are used.
+
+1. Load balancing. Each message is delivered to one of the consumers. The broker may assign messages to consumers arbitrarily. Useful when processing is expensive and can add consumers to parallelize. In AMQP, you can implement load balancing by having multi‐ ple clients consuming from the same queue, and in JMS it is called a shared subscription.
+1. Fan out. Each message is delivered to all of the consumers. This feature is provided by topic subscriptions in JMS, and exchange bindings in AMQP.
+
+The two patterns can be combined. Two separate groups, each group collectively receives all messages but within each group only one node receives each message.
+
+**Acknowledgements and redelivery**
+
+
