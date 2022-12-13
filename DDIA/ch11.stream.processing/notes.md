@@ -43,5 +43,24 @@ Batch processing system provide a strong reliability with retry and discarding p
 
 Require application code to be aware of message loss. Can tolerate limited faults. Generally assume producers and consumers are constantly online.
 
-**Message Brokers**
+**Message Broker (Queue)**
+
+Essentially a kind of database optimized for handling message streams. More easily tolerate clients that come and go (connect, disconnct, and crash). Some only keep messages in memory, others write to disk. They generally allow unbounded queueing as opposed to dropping message or backpressure.
+
+Consumers are generally asynchronous considering that the producer does not wait for messaging processing.
+
+**Message Brokers compared to databases**
+
+Some message brokers can even participate in two-phase commit protocols using XA or JTA.
+
+Important practical differences:
+
+- Message broker automatically delete a message, thus not suitable for long-term storage. Databases keep until explicitly deleted.
+- Message brokers assume the working set is small. If broker buffer a lot of messages, perhaps spilling messages to disk if they no longer fit in memory, each individual message takes longer to process and the overall throughput may degrade.
+- Databases often support secondary indexes and various of searching, while message brokers often support subscribing to a subset of topics matching some pattern. Both are essentially ways for a client to select portion of the data.
+- Database query result is based on a point-in-time snapshot of the data. Message brokers do not support arbitrary quries, but notify clients when data changes.
+
+The above traditional view of message brokers are in standards like JMS (JSR-343 Java Message Service 2.0 specification) and AMQP (Advanced Message Queuing Protocol Specification) and implemented in software like RabbitMQ, ActiveMQ, HornetQ, Qpid, TIBCO enterprise message service, IBM MQ, Azure service bugs, and google cloud pub/sub.
+
+**Multiple consumers**
 
