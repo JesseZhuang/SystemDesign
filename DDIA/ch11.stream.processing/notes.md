@@ -81,4 +81,18 @@ The combination of load balancing and redelivery leads to messages being reorder
 
 ## 11.2 Partitioned Logs
 
+Why can we not have a hybrid, combining the durable storage approach of databases with the low-latency notification facilities of messaging? This is the idea behind log- based message brokers.
 
+**Using logs for message storage**
+
+The Unix tool `tail -f`, which watches a file for data being appended, essentially works like this.
+
+![](./fig.11-3.png)
+
+The log can be partitioned. Different partitions can then be hosted on different machines, making each partition a separate log that can be read and written independently from other partitions. A topic can then be defined as a group of partitions that all carry messages of the same type.
+
+Within each partition, the broker assigns a monotonically increasing sequence number, or offset, to every message. Such a sequence number makes sense because a partition is append-only, so the messages within a partition are totally ordered. There is no ordering guarantee across different partitions.
+
+Apache Kafka, Amazon Kinesis Streams, and Twitter’s DistributedLog are log-based message brokers. Google Cloud Pub/Sub is architecturally similar but exposes a JMS-style API rather than a log abstraction. Even though these message brokers write all messages to disk, they are able to achieve throughput of millions of messages per second by partitioning across multiple machines, and fault tolerance by replicating messages.
+
+**Logs compared to traditional messaging**
