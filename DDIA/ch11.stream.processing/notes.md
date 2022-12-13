@@ -79,7 +79,7 @@ It is possible that the message was fully processed but the ack was lost in the 
 
 The combination of load balancing and redelivery leads to messages being reordered. To avoid, you can use a separate queue per consumer.
 
-## 11.2 Partitioned Logs
+## 11.1.2 Partitioned Logs
 
 Why can we not have a hybrid, combining the durable storage approach of databases with the low-latency notification facilities of messaging? This is the idea behind log- based message brokers.
 
@@ -96,3 +96,12 @@ Within each partition, the broker assigns a monotonically increasing sequence nu
 Apache Kafka, Amazon Kinesis Streams, and Twitter’s DistributedLog are log-based message brokers. Google Cloud Pub/Sub is architecturally similar but exposes a JMS-style API rather than a log abstraction. Even though these message brokers write all messages to disk, they are able to achieve throughput of millions of messages per second by partitioning across multiple machines, and fault tolerance by replicating messages.
 
 **Logs compared to traditional messaging**
+
+The log-based approach trivially supports fan-out messaging, because several consumers can independently read the log without affecting each other—reading a message does not delete it from the log. To achieve load balancing across a group of consumers, instead of assigning individual messages to consumer clients, the broker can assign entire partitions to nodes in the consumer group.
+
+Each client then consumes all the messages in the partitions it has been assigned. Typically, when a consumer has been assigned a log partition, it reads the messages in the partition sequentially, in a straightforward single-threaded manner. This coarse grained load balancing approach has some downsides:
+
+- The number of nodes sharing the work of consuming a topic can be at most the number of log partitions in that topic, because messages within the same partition are delivered to the same node.
+- If a single message is slow to process, it holds up the processing of subsequent messages in that partition (a form of head-of-line blocking).
+
+Thus, in situations where messages may be expensive to process and you want to parallelize processing on a message-by-message basis, and where message ordering is not so important, the JMS/AMQP style of message broker is preferable. On the other hand, in situations with high message throughput, where each message is fast to process and where message ordering is important, the log-based approach works very well.
