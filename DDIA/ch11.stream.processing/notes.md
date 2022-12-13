@@ -36,3 +36,12 @@ Batch processing system provide a strong reliability with retry and discarding p
 
 **Direct messaging from producers to consumers**
 
+- UDP multicast is widely used in the financial industry for streaming stock feeds, where low latency is important. Application level protocols can recover lost packets (producer remember packets so that it can retransmit).
+- Brokerless libraries such as ZeroMQ and nanomsg pub/sub over TCP/IP multicast.
+- StatsD and Brubeck use UDP messaging for collecting metrics. (In StatsD, counter metrics are only correct if all messages are received. Using UDP makes the metrics at best approximate.)
+- If the consumer exposes a service on the network, producers can make a direct HTTP or RPC request, which is the idea behidn webhooks, a pattern in which a callback URL of one service is registered with another service.
+
+Require application code to be aware of message loss. Can tolerate limited faults. Generally assume producers and consumers are constantly online.
+
+**Message Brokers**
+
