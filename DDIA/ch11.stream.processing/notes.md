@@ -51,7 +51,7 @@ Consumers are generally asynchronous considering that the producer does not wait
 
 **Message Brokers compared to databases**
 
-Some message brokers can even participate in two-phase commit protocols using XA or JTA.
+Some message brokers can even participate in two-phase commit protocols using XA (eXtended Architecture) or JTA (Java Transaction API).
 
 Important practical differences:
 
@@ -101,7 +101,19 @@ The log-based approach trivially supports fan-out messaging, because several con
 
 Each client then consumes all the messages in the partitions it has been assigned. Typically, when a consumer has been assigned a log partition, it reads the messages in the partition sequentially, in a straightforward single-threaded manner. This coarse grained load balancing approach has some downsides:
 
-- The number of nodes sharing the work of consuming a topic can be at most the number of log partitions in that topic, because messages within the same partition are delivered to the same node.
+- The number of nodes sharing the work of consuming a topic can be at most the number of log partitions in that topic, because messages within the same partition are delivered to the same node.[1]
 - If a single message is slow to process, it holds up the processing of subsequent messages in that partition (a form of head-of-line blocking).
 
-Thus, in situations where messages may be expensive to process and you want to parallelize processing on a message-by-message basis, and where message ordering is not so important, the JMS/AMQP style of message broker is preferable. On the other hand, in situations with high message throughput, where each message is fast to process and where message ordering is important, the log-based approach works very well.
+Thus, in situations where messages may be expensive to process and you want to parallelize processing on a message-by-message basis, and where message ordering is not so important, the JMS/AMQP style of message broker is preferable (SQS no order). On the other hand, in situations with high message throughput, where each message is fast to process and where message ordering is important (SQS FIFO?), the log-based approach works very well.
+
+[1]: In general, single-threaded processing of a partition is preferable, and parallelism can be increased by using more partitions.)
+
+**Consumer offsets**
+
+With periodically marking an offset while consuming a partition sequentially, the broker does not need to track acknowledgments for every single message. The reduced bookkeeping, opportunities for batching and pipelining help increase the throughput for log-based systems.
+
+This offset is similar to the log sequence number that is commonly found in single-leader database replication. In database replication, the log sequence number allows a follower to reconnect and resume replication without skipping any writes. Exactly the same principle is used here: the message broker behaves like a leader database, and the consumer like a follower.
+
+If a consumer node fails, another node in the consumer group is assigned the failed consumer’s partitions, and it starts consuming messages at the last recorded offset. If the consumer had processed subsequent messages but not yet recorded their offset, those messages will be processed a second time upon restart.
+
+**Disk space usage**
