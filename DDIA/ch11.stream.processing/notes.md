@@ -117,3 +117,23 @@ This offset is similar to the log sequence number that is commonly found in sing
 If a consumer node fails, another node in the consumer group is assigned the failed consumer’s partitions, and it starts consuming messages at the last recorded offset. If the consumer had processed subsequent messages but not yet recorded their offset, those messages will be processed a second time upon restart.
 
 **Disk space usage**
+
+Log is divided into segments and deleted or moved to archive from time to time to reclaim disk space.
+
+A slow consumer may fall far behind that the offset points to a deleted segment and may miss some messages. Effectively, the log implement a bounded-szie buffer when it gets full, a circular buffer or ring buffer. The buffer is on disk and can be very large.
+
+A typical large hard drive has a capacity of 6 TB and a sequential write throughput of 150 Mb/s. It takes about 11 hours to fill. Thus, the disk can buffer 11 hours' worth of messages. This ratio remains the same even if you use many drives and machines. In practice, deployments rarely use the full write bandwidth, so the log can typically keep a buffer of several days or weeks.
+
+The throughput of a log remains more or less constant, since every message is written to disk anyway. In contrast to keeping messages in memory by default: such systems are fast when queues are short and much slower when they start writing to disk.
+
+**When consumers cannot keep up with producers**
+
+We discussed three choices previously. The log-based approach is a form of buffering with a large fixed-size buffer (available disk space).
+
+If a consumer falls so far behind, the broker effectively drops old messages that go back further than buffer size can accomodate. You can mointor how far behind and raise an alert. As the buffer is large, there is enough time for a human operator to fix the slow consumer.
+
+Even if a consumer does fall too far behind, only that consumer is affected; it does not disrupt other consumers. This fact is a big operational advantage: you can experimentally consume a production log for development, testing, or debugging purposes, without having to worry much about disrupting production services. When a consumer is shut down or crashes, it stops consuming resources—the only thing that remains is its consumer offset.
+
+This behavior also contrasts with traditional message brokers, where you need to be careful to delete any queues whose consumers have been shut down—otherwise they continue unnecessarily accumulating messages and taking away memory from consumers that are still active.
+
+**Replaying old messages**
