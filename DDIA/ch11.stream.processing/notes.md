@@ -137,3 +137,13 @@ Even if a consumer does fall too far behind, only that consumer is affected; it 
 This behavior also contrasts with traditional message brokers, where you need to be careful to delete any queues whose consumers have been shut down—otherwise they continue unnecessarily accumulating messages and taking away memory from consumers that are still active.
 
 **Replaying old messages**
+
+Processing and acknowledging messages
+- is a destructive operation for AMQP- and JMS-style message brokers, since it causes the messages to be deleted on the broker.
+- in a log-based message broker, consuming messages is more like reading from a file: it is a read-only operation that does not change the log.
+
+The offset is under the consumer’s control, so it can easily be manipulated if necessary: for example, you can start a copy of a consumer with yesterday’s offsets and write the output to a different location, in order to reprocess the last day’s worth of messages. You can repeat this any number of times, varying the processing code.
+
+This aspect makes log-based messaging more like the batch processes. It allows more experimentation and easier recovery from errors and bugs, making it a good tool for integrating dataflows within an organization.
+
+## 11.1.3 Databases and Streams
