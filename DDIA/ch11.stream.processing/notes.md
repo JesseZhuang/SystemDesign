@@ -146,4 +146,28 @@ The offset is under the consumer’s control, so it can easily be manipulated if
 
 This aspect makes log-based messaging more like the batch processes. It allows more experimentation and easier recovery from errors and bugs, making it a good tool for integrating dataflows within an organization.
 
-## 11.1.3 Databases and Streams
+## 11.2 Databases and Streams
+
+The connection between databases and streams run deeper than just the physical storage of logs on disk--it is quite fundamental.
+
+A replication log is a stream of databse writes, produced by the leader as it processes transactions. The followers apply the stream to their own copy and end up with an accurate copy.
+
+### 11.2.1 Keeping Systems in Sync
+
+There is no single system satisfying all data storage, querying, and processing needs. For example, using an OLTP (online transaction processing) DB to serve user requests, a cache to speed up common requests, a full-text index to handle search queries, and a data warehouse for analytics. Each has its own copy of data stored in its own representation that is optimized for its own purposes.
+
+Data need to be kept in sync. With data warehouses this is performed by ETL processes, a batch process.
+
+If periodic full dump is too slow, an alternative is dual writes, in which application code explicitly writes to each, e.g., first writing to DB, then updating the search index, then invalidating the cache (or write concurrently).
+
+Dual writes have some problems, one of which is race condition. client 1 wants to set the value to A, and client 2 wants to set it to B.
+
+![](./11.4.race.condition.png)
+
+Another possibility is that one write may fail and the other succeeds. This is a fault-tolerance problem but two systems are inconsistent. Atomic commit is expensive to solve. The database has a leader and the search index has a leader as well. Neither follows the other so conflicts can occur.
+
+### 11.2.2 Change Data Capture
+
+### 11.2.3 Event Sourcing
+
+### 11.2.4 State, Streams, and Immutability
