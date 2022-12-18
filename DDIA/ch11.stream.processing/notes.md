@@ -168,6 +168,23 @@ Another possibility is that one write may fail and the other succeeds. This is a
 
 ### 11.2.2 Change Data Capture
 
+Databases' replication logs are considered internal implementation and not a public API, thus not intended to be parsed by external clients.
+
+**Implementing change data capture**
+
+Change data capture is a mechanism for ensuring that all changes made to the system of record are also reflected in the derived data systems so that the derived systems have an accurate copy of the data. A log-based message broker is well suited since it preserves the ordering of messages.
+
+Database triggers can be used to implement change data capture by registering triggers that observe all changes to data tables and add corresponding entries to a changelog table. However, they tend to be fragile and have significant performance overheads. Parsing the replication log can be a more robust approach, although it also comes with challenges, such as handling schema changes.
+
+LinkedIn’s [Databus](), Facebook’s [Wormhole](), and Yahoo!’s [Sherpa]() use this idea at large scale. [Bottled Water]() implements CDC for PostgreSQL using an API that decodes the write-ahead log [28], [Maxwell](https://maxwells-daemon.io/) and [Debezium](https://debezium.io/) do something similar for MySQL by parsing the binlog, Mongoriver reads the MongoDB oplog [32, 33], and GoldenGate provides similar facilities for Oracle [34, 35].
+
+
+Like message brokers, change data capture is usually asynchronous: the system of record database does not wait for the change to be applied to consumers before committing it. This design has the operational advantage that adding a slow consumer does not affect the system of record too much, but it has the downside that all the issues of replication lag apply.
+
+**Initial snapshot**
+
+
+
 ### 11.2.3 Event Sourcing
 
 ### 11.2.4 State, Streams, and Immutability
