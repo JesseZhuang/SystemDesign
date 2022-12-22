@@ -223,6 +223,20 @@ Specialized DB such as Event Store [46] have been developed to support applicati
 
 **Deriving current state from the event log**
 
+Applications that use event sourcing can take the log of events and transform into application state. The transformation logic can be arbitrary but deterministic.
+
+Like CDC, replaying event log reconstruct teh current state of the system. However, log compaction needs to be handled differently:
+
+- A CDC event for update contains the entire new version of the record and log compaction can discard previous events for the same key.
+- With event sourcing, events are modeled at a higher level: an event expresses user intention not mechanics of the state update. Later events typically do not override prior events. Log compaction is not possible in the same way.
+
+**Commands and events**
+
+With event sourcing, a user issues a command which may fail. The application must validate synchronously. If the validation succeeds, the command becomes an event, which is durable and immutable. For example, if a user tries to reserve a seat.
+
+A consumer of the event stream is not allowed to reject an event: it is immutable part of the log and may have been seen by other consumers.
+
+Alternatively the reservation could be split into two events: first a tentative reservation, and then a seprate confirmation event once the reservation has been validated. The aplit allows the validation process asynchronous.
 
 ### 11.2.4 State, Streams, and Immutability
 
