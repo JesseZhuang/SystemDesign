@@ -266,4 +266,18 @@ On page 11, for twitter's home timelines, a cache of recently written tweets by 
 
 **Concurrency control**
 
+The biggest downside of event sourcing and change data capture is that the consumers of the event log are usually async, we discussed previously "Reading Your Own Writes" on page 162.
+
+One solution is to perform the updates synchronously with appending the event to the log. This requries a transaction to combine the writes into an atomci unit. So either you keep the event log and the read view in the same storage system, or use a distributed transaction across different systems.
+
+On the other hand, much of the need for multi-object transactions stem from a single user action requiring data changes in different places. With event sourcing, the event can be self-contained requiring a single write--appending log, which is easy to make atomic.
+
+if processing an event in partition 3 only requires updating partition 3 of teh application state, a straightforward single-threaded consumer needs no concurrency control for writes. The log removes the non‐ determinism of concurrency by defining a serial order of events in a partition [24].
+
+**Limitations of immutability**
+
+
 ## 11.3 Processing Streams
+
+<!-- References -->
+
