@@ -201,6 +201,29 @@ This log compaction feature is supported by Apache Kafka. As we shall see later 
 
 **API support for change streams**
 
+Databases are beginning to support change streams as first-class interface, e.g., RethinkDB allows notification subscription [when query result change, 36](), [Firebase]() and CouchDB() provide data sync based on a change feed also available to applications, and [Meteor]() uses the MongoDB oplog to subscribe to data changes and update UI.
+
+VoltDB represents an output stream in the relational data model as a table into which transactions can insert tuples, but cannot be queried. The stream consists of the log of tuples of the committed transactions, in the order they were committed. External consumers can asynchronously consume this log and use it to update derived data systems.
+
+Kafka Connect [41] is an effort to integrate change data capture tools for a wide range of database systems with Kafka.
+
 ### 11.2.3 Event Sourcing
 
+There are some parallels between CDC and event sourcing, which was developed in the domain-driven design (DDD) community [42-44]. Simlarly event sourcing also stores changes as a log of change events.
+
+The biggest difference is that event sourcing applies the idea at a different level of abstraction:
+- In CDC, application uses DB in a mutable way. The log of changes is stracted from DB at a low level (e.g., parsing the replication log) to ensure the order of writes and avoid race condition. The pplication does not need to be aware of CDC.
+- In event sourcing, application logic is built on immutable events written to an event log. The event store is append-only. Updates or deletes are discouraged or prohibited. Events are designed to reflect things happened at the application level, rather than state changes.
+
+Event sourcing makes it easier to evolve applications over time, to understand why something happended, and guards against application bugs.
+
+Event sourcing is similar to the chronicle data model [45]. Event log is similar to the fact table in a [star schema](p93 stars and snowflakes).
+
+Specialized DB such as Event Store [46] have been developed to support applications using event sourcing. A conventional DB or a log-based message broker can be used to build applications in this style.
+
+**Deriving current state from the event log**
+
+
 ### 11.2.4 State, Streams, and Immutability
+
+
