@@ -240,4 +240,30 @@ Alternatively the reservation could be split into two events: first a tentative 
 
 ### 11.2.4 State, Streams, and Immutability
 
+From Pat Helland [52],
 
+>Transaction logs record all the changes made to the database. High-speed appends are the only way to change the log. From this perspective, the contents of the database hold a caching of the latest record values in the logs. The truth is the log. The database is a cache of a subset of the log. That cached subset happens to be the latest value of each record and index value from the log.
+
+Log compaction is one way of bridging the distinction between log and DB state: it retains only the latest version of each record.
+
+**Advantages of immutable events**
+
+Immutability in databases is an old idea. For example, accountants have been using immutability for centuries in financial bookkeeping. When a transaction occurs, it is recorded in an append-only ledger, which is essentially a log of events describing money, goods, or services that have changed hands. The accounts, such as profit and loss or the balance sheet, are derived from the transactions in the ledger by adding them up [53].
+
+The incorrect transaction still remains in the ledger forever, because it might be important for auditing reasons.
+
+Immutable events also capture more information than just the current state. Customer adds to card and remove later. The information might be useful for analytics. Perhaps the customer foudn a substitute.
+
+**Deriving several views from the same event log**
+
+One can derive several different read-oriented representations from the same log of events, just like having multiple consumers of a stream. For example, Druid ingests directly from Kafka [55], Pistachio is a distributed key-value store using kafka as a commit log [56], Kafka Connect sinks exports to various databases and indexes [41].
+
+Having an explicit translation step from an event log helps application evolution over time. If you want to introduce a new feature, you can build a separate read-optimized view of the new feature and run alongside existing systems. It is much easier than schema migration.
+
+Schema design, indexing, and storage engines are aimed to support certain query and access patterns. Storing data is straightforward without the worry about how it is going to be queried. The idea is sometimes known as command query responsibility segregation (CQRS) [42],[58],[59].
+
+On page 11, for twitter's home timelines, a cache of recently written tweets by people that a user follows. This is another example of read-optimized state: home timelines are highly denormalized, since your tweets are duplicated in all the timelines of the people following you. However, the fan-out service keeps the duplicated state in sync with new tweets and new following relationships, which keeps the duplication manageable.
+
+**Concurrency control**
+
+## 11.3 Processing Streams
