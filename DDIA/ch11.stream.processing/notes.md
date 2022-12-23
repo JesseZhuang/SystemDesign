@@ -276,8 +276,20 @@ if processing an event in partition 3 only requires updating partition 3 of teh 
 
 **Limitations of immutability**
 
+Various databases internally use immutables or multi-version data to support point-in-time snapshots. Version control systems such as Git, Mercurial, and Fossile also rely on immutable data.
+
+To what extent is it feasible to keep an immutable history forever? The answer depends on the amout of churn in the dataset.
+
+1. Workloads mostly add data and rarely update or delete. They ae easy to make immutable.
+1. Workloads hav a high rate of updates and deletes on a small dataset. The immutable history may grow prohibitiely large, fragmentation may become an issue, and compaction and grbage collection becomes crucial [60], [61].
+
+Data may need to be deleted for admin reasons, e.g., privacy regulations may require deleting user's personal info after account closing, data protection legislation may require erroneous info to be removed, or an accidental leak of sesitive info may need to be contained. In these cases, you acctually want to rewrite history and pretend the data was never written. Datomic calls this feature excision [62] and Fossil has a similar concept called shunning [63].
+
+Truly deleting is surprisingly hard [64], e.g., storage engines, file systems, and SSDs often write to a new location rather than overriting in place [52], and backups are often deliberately immutable to prevent accidental deletion or corruption.
 
 ## 11.3 Processing Streams
+
+Streams come from (user activity events, sensors, and writes to DBs) and are transported through direct messaging, via message brokers, and in event logs.
 
 <!-- References -->
 
