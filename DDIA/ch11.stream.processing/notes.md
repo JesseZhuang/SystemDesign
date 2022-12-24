@@ -305,9 +305,61 @@ The one crucial difference is that a stream never ends. Implications: sorting do
 
 ### 11.3.1 Uses of Stream Processing
 
+Strea processing has long been used for monitoring. For example:
+
+1. Fraud detection systems block a credit card if it is likely to be stolen.
+1. Trading systems to examine price changes and execute trades.
+1. Manufacturing systems to monitor machine statuses and quickly identify malfunctions.
+1. Military and intelligence systems to track aggressor activities.
+
+These applications require sophisticated pattern matching and correlations.
+
+**Complex event processing**
+
+Complex event processing (CEP) was developed in 1990s especialy geared toward searching for certain event patterns [65], [66]. Similar to a regular expression, CEP allows to specify rules to search for patterns of events in a stream.
+
+CEP often use a high-level declarative query language like SQL, or a gaphical UI, to describe the patterns. The queries are submitted to a processing engine that consumes the input streams and maintains a state machine. If a match is found, a compelx event with details of the pattern detected will be emitted [67].
+
+CEP engines reverse the roles compared to databases. The queries are stored long-term and events flow past [68]. Usually a database stores data persistently and treat queries as transient.
+
+Implementations of CEP include Esper [69], IBM InfoSphere Streams [70], Apama, TIBCO streambase, and SQLstream. Distributed stream processors like Samza are also gaining SQL support for declarative queries on streams [71], AWS EventBridge rules, AWS Kinesis.
+
+**Stream analytics**
+
+The boundary between CEP and stream analytics is blurry, but as a general rule, analytics is more oriented toward aggregations and statistical metrics.
+
+1. Measuring the rate of some type of event
+1. calculating the rolling average of a value over time
+1. comparing current statistics to previous time intervals
+
+Such statistics are usually computed over fixed time intervals, e.g., QPS over the last 5 minutes, and p99 of response time. The aggregation time interval is known as a window.
+
+Stream analytics sometimes use probailistic algorithems, such as bloom filters (performance optimization, p79) for set membership, HyperLogLog [72] for cardinality estimation, and various percentile estimation algorithems (p16). Probablistic algorithms produce approximate results and require significantly less memory [73].
+
+Many distributed stream processing frameworks are designed with analytics in mind: Apache Storm, Spark Streaming, Flink, Concord, Samza, and Kafka Streams [74]. Hosted services include Google Cloud Dataflow and Azure Stream Analytics.
+
+**Maintaining materialized views**
+
+Application state is maintained by applying a log of events; here the application state is a kind of materialized view [50]. In principle, any stream processor could be used for materialized view maintenance. Although the need to maintain events forever runs counter to assumptions of some analytics frameworks. Samza and Kafka Streams support this building upon log compaction [75].
+
+**Search on streams**
+
+Besides CEP, sometimes there is a need to search for events based on complex criteria, such as full-text search queries.
+
+For example, media monitoring services subscribe to feeds. Real estate websites notify when a new property matches. The percolagor feature of Elasticsearch [76] is one option for implementing this kind of stream search.
+
+Conventional search engines first index the documents and then run quries over the index. Searching a stream stores the queries and documents run past the quries, like in CEP. In the simpliest case, you can test every document against every query. To optimize, it is possible to index the queries as well as the documents [77].
+
+**Message passing and RPC**
 
 
-### 11.3.2
+
+### 11.3.2 Reasoning About Time
+
+### 11.3.3 Stream Joins
+
+### 11.3.4 Fault Tolerance
+
 
 ## Summary
 
