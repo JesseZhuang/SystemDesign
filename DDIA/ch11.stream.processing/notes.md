@@ -291,5 +291,25 @@ Truly deleting is surprisingly hard [64], e.g., storage engines, file systems, a
 
 Streams come from (user activity events, sensors, and writes to DBs) and are transported through direct messaging, via message brokers, and in event logs.
 
+What you can do with the stream
+
+1. Take the data in the events and write to a DB, cache, search index, or similar storage system. This is a good way to keep a DB in sync with other parts of the system.
+1. Push the events to users in some way, e.g., sending email or push notifications, or by streaming to a real-time dashboard. In this case, a human is the ultimate consumer.
+1. Process one or more streams to produce one or more output streams. Streams may go through a pipeline consisting several such stages before they eventually end up at an output (option 1 or 2).
+
+A pice of code processing streams is known as an operator or a job, closely related to Unix processes and MapReduce jobs. Pattern is similar: consume in a read-only fashion and writes to a different location in an append-only fashion.
+
+The patterns for partitioning, parallelization, transforming, and filtering are also similar to those in MapReduce and dataflow engines.
+
+The one crucial difference is that a stream never ends. Implications: sorting does not make sense, so sort-merge joins (p403) cannot be used. Fault-tolerance mechanisms must also change: for a stream job running for several years, restarting from beginning after a crash may not be a viable option.
+
+### 11.3.1 Uses of Stream Processing
+
+
+
+### 11.3.2
+
+## Summary
+
 <!-- References -->
 
