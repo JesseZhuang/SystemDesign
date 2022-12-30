@@ -87,7 +87,7 @@ Why can we not have a hybrid, combining the durable storage approach of database
 
 The Unix tool `tail -f`, which watches a file for data being appended, essentially works like this.
 
-![](./fig.11-3.png)
+![](./fig.11-3.log.partition.png)
 
 The log can be partitioned. Different partitions can then be hosted on different machines, making each partition a separate log that can be read and written independently from other partitions. A topic can then be defined as a group of partitions that all carry messages of the same type.
 
@@ -366,6 +366,13 @@ Using the timestamps in the events allows the processing to be deterministic. On
 
 **Event time versus processing time**
 
+There are many reasons why processing may be delayed. Moreover, message delays can also lead to unpredictable ordering of messages.
+
+Analogy with Star Wars movies: releasing time and viewing time are similar to event timestamp and processing time.
+
+![](fig.11-7.processing.artifact.png)
+
+**Knowing when you’re ready**
 
 ### 11.3.3 Stream Joins
 
