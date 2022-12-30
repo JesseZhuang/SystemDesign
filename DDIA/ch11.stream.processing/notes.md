@@ -352,9 +352,20 @@ Conventional search engines first index the documents and then run quries over t
 
 **Message passing and RPC**
 
+Message-passing system can be an alternative to RPC, as used in the actor model. Although these systems are based on messages and events, we normally don't thik of them as stream processors.
 
+- Actor frameworks are primarily a mechanism for managing concurrency and distributed execution of communicating modules, whereas stream processing is primarily a data management technique.
+- Communication between actors is often ephemeral and one-to-one, whereas event logs are durable and multi-subscriber.
+- Actors can communicate in arbitrary ways (including cyclic request/response patterns), but stream processors are usually set up in acyclic pipelines.
+
+Corssover areas: Apache Storm has a feature called distributed RPC, which allow queries to be farmed out to a set of nodes that also process event streams; the queries are interleaved with events from the input streams, and results can be aggregated and sent back to the user [78].
 
 ### 11.3.2 Reasoning About Time
+
+Using the timestamps in the events allows the processing to be deterministic. On the other hand, many frameworks use the local system clock on the processing maching (the processing time) to determine windowing [79].
+
+**Event time versus processing time**
+
 
 ### 11.3.3 Stream Joins
 
