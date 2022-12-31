@@ -374,6 +374,17 @@ Analogy with Star Wars movies: releasing time and viewing time are similar to ev
 
 **Knowing when you’re ready**
 
+A tricky problem is that you can never be sure when you have received all of the events for a particular window. You can time out but some events can be delayed due to network interruption. You need to be able to handle such straggler events that arrive after the window declared complete. Broadly, you have two options [1]
+
+1. ignore the straggler events. probably a small percentage. You can track the dropped events as a metric and alert if it becomes significant.
+1. publish a coorection, may also need to retract the previous output.
+
+In some cases it is possible to use a special message to indicate timeout which can be used by consumers to trigger windows [81]. However, if several producers each has their own minimum timestamp thresholds, the consumers need to keep track of each producer individually. Adding and removing producers is trickier.
+
+**Whose clock are you using, anyway?**
+
+**Types of windows**
+
 ### 11.3.3 Stream Joins
 
 ### 11.3.4 Fault Tolerance
