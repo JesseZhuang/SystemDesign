@@ -383,6 +383,20 @@ In some cases it is possible to use a special message to indicate timeout which 
 
 **Whose clock are you using, anyway?**
 
+Assigning timestamps is even more difficult if events are buffered at several points in the system. For example, mobile app may buffer events for hours or days when offline and send them to server when back online.
+
+In this context, the timestamp should really be when the user interaction occured, according to the mobile device's clock. However, the clock on a user-controlled device often cannot be trusted, as it might be accidentally or deliberately set to the wrong time (p289 clock synchronization). The time the event was received by the server is under your control but less meaningful in terms of user interaction.
+
+To adjust for incorrect device locks, one approach is to log three timestamps [82]:
+
+1. device clock: event occur time
+1. device clock: event sent to server
+1. server clock: event received
+
+Subtracting second from the third, you can estimate the offset between device clock and server clock (assuming network delay is negiligible). You can then apply the offset to the event timestamp to estimate the true time when the event occurred (assuming the device clock offset did not change during that whole period).
+
+Batch processing suffers from the same issues of reasoning about time. It is just more noticeable in a streaming context.
+
 **Types of windows**
 
 ### 11.3.3 Stream Joins
