@@ -399,7 +399,25 @@ Batch processing suffers from the same issues of reasoning about time. It is jus
 
 **Types of windows**
 
+The window can be used for aggregtions, e.g., to count events or calculate average. Several types of windows are in common use [79,83]:
+
+- tumbling window, fixed length, rounding down to nearest minute
+- hopping window, fixed length, allow overlap, e.g., 5-min window with a hop size of 1 min would cover 10:03:00-10:07:59 and the next 10:04:00-10:08:59. You can implement hopping window by calculating 1-min tubling windows then aggregating over several adjacent windows.
+- sliding window, 5-min sliding window cover 10:03:39 and 10:08:12, because they are less than 5 min apart (note tumbling and hopping 5-min windows would not have put the two in the same window as they use fixed boundaries). can be implemented by keeping a buffer of events sorted by time and removing old events when they expire.
+- session window, no fixed duration. grouping all events for the same user occur closely together in time. window ends when the user has been inactive for some time, e.g., no events for 30 min. Sessionization is common requirement for website analytics (see group by on p406).
+
 ### 11.3.3 Stream Joins
+
+In chapter 10, we discussed batch jobs join datasets by key. Stream processing generalizes data pipelines to incremental processing of unbounded datasets, there is exactly the same need for joins on streams.
+
+Since new events can appear anytime on a stream, joins on streams is more challenging.
+
+- stream-stream joins
+- stream-table joins
+- table-table joins [84]
+
+**Stream-stream join(window join)**
+
 
 ### 11.3.4 Fault Tolerance
 
