@@ -418,6 +418,51 @@ Since new events can appear anytime on a stream, joins on streams is more challe
 
 **Stream-stream join(window join)**
 
+Advertising systems need to measure click through rate for searches [85]. The click and search events are joined by session ID.
+
+1. The time difference between the search event and click event can vary a lot: a few seconds, days, or weeks. Due to network delays, the click event may arrive before the search event.
+1. Note embedding the details of the search in the click event only tells about the cases where the result was clicked and not about the searches where the user did not click any.
+
+You may choose to join if they occur at most one hour apart. To implement this kind of join, a stream processor needs to maintain state, e.g., all events occurred in the last hour indexed by session ID. Whenever a new event occurs, it is added to the appropriate index, and the stream processor also checks the other index for same session ID. If the search event expires without a matching click event, you emit an event saying which search results were not clicked.
+
+**Stream-table join(stream enrichment)**
+
+Page 404 has an example where a process to enrich the activity events with user information from the user data base. The database lookup could be implemented by querying a remote database, which can be slow and risk overloading the database [75].
+
+Another approach is to load a copy of the database to the stream processor similar to batch job. The local copy can be an in-memory hash table or an index on the local disk. A stream processor is long running compared to the batch job and the local copy needs to be kept up to date. This can be solved by change data capture. We obtain a join between two streams: activity events and the profile udpates.
+
+For the user profile changelog stream, the join uses a window that reaches back to the beginning of time (conceptually infinite window), with newer versions overwriting older ones. For the activity stream input, the join may not maintain a window at all.
+
+**Table-table join (materialized view maintenance)**
+
+For twitter timeline example on page 11, we use a timeline cache:
+
+1. when user u sends a new tweet, add to time of of all followers (push).
+1. when a tweet is deleted, remove from all users timelines (push)
+1. when user u starts following v, recent tweets by v are added to u's timeline (push)
+1. when u unfollows v, tweets by v are removed from u's timeline
+
+To implement the cache maintenance in a stream processor, you need tweet events stream and follow relationships. The stream process maintains a database containing follow relationships to know which timelines to update when a new tweet arrives [86].
+
+Another way of looking at this stream process is materialized view for a query joining two tables (tweets and follows):
+
+```sql
+SELECT follows.follower_id AS timeline_id, array_agg(tweets.* ORDER BY tweets.timestamp DESC)
+FROM tweets
+JOIN follows ON follows.followee_id = tweets.sender_id GROUP BY follows.follower_id
+```
+
+The timelines are effectively a cache of the query result, updated every time the underlying tables change. The stream of changes to the materialized join follows the product rule (u·v)′ = u′v + uv′. In words: any change of tweets is joined with the current followers, and any change of followers is joined with the current tweets [49, 50].
+
+**Time-dependence of joins**
+
+The three types of join above all require the stream processor to maintain some state. The order of the events that maintain the state is important (follow then unfollow, or the other way around). If state changes over time, what point in time do you use for the join [45]?
+
+Another example is joining sales to tax rates. You probably want to join with the tax rate at the time of the sale.
+
+If the ordering across streams is undetermined, the join becomes nondeterministic [87]. You cannot rerun the same job and get the same result. The events on the streams may be interleaved in a different way when you run the job again.
+
+In data warehouses, this issue is known as a slowly changing dimension (SCD) and is often addressed by using a unique ID for versioning. For example, a new id when the tax rate changes [88], [89]. The join is deterministic but the consequence is log compaction is not possible since all versions need to be retained.
 
 ### 11.3.4 Fault Tolerance
 
