@@ -466,6 +466,13 @@ In data warehouses, this issue is known as a slowly changing dimension (SCD) and
 
 ### 11.3.4 Fault Tolerance
 
+Batch job can tolerate faults pretty easily: if a task in a MapReduce job fails, it can start again in another machine and the output of the failed task is discarded. The transparent retry is possible because input files are immutable, each task writes the output to a separate file in HDFS, and output is only made visible when a task completes successfully. This principle is known as exactly-once semantics, although effectively-once is more descriptive [90].
+
+The same issue is harder to handle in stream processing: waiting task finish before output visible is not an option, stream is never ending.
+
+**Microbatching and checkpointing**
+
+One approach is to break the stream into small blocks and treat each as miniature batch process. This microbatching approach is used in Spark Streaming [91]. Batch size is typically around one second, which is a performance compromise: smaller batches incur greater scheduling and coordination overhead, while larger batches mean a longer delay before results are visible.
 
 ## Summary
 
