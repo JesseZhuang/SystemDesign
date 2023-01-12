@@ -474,6 +474,19 @@ The same issue is harder to handle in stream processing: waiting task finish bef
 
 One approach is to break the stream into small blocks and treat each as miniature batch process. This microbatching approach is used in Spark Streaming [91]. Batch size is typically around one second, which is a performance compromise: smaller batches incur greater scheduling and coordination overhead, while larger batches mean a longer delay before results are visible.
 
+Microbatching implicitly provides a tumbling window equal to the batch size (windowed by processing time, not event time).
+
+A variant approach in Apaphe Flink is to periodicially generate rolling check-pointsof state and write to durable storage [92,93]. If a stream operator crashes, it can restart from its most recent checkpoint. The checkpoints are triggered by barriers in the message stream, similar to boundaries between microbatches, but without forcing a specific window size.
+
+Within the confines of stream processing framework, the above approaches provide the same exactly-once semantics as batch processing. However, after the output is sent (writing to DB, email, message to an external broker), the framework is no longer able to discard the output of a failed batch. In this case, restarting a failed task causes the external side effect to happen twice.
+
+**Atomic commit revisited**
+
+Previsouly discussed on page 360 in "Exactly-once message processing" in the context of distributed transactions and two-phase commit. In Chapter 9, the discussion was traditional implementations fo distributed transactions, such as XA. In more restricted environments, it is possible to implement such an atomic facility efficiently. This approach is used in Google Cloud Dataflow [81],[92] and VoltDB [94], plans to add to Kafka [95],[96]. Unlike XA, it does not attempt to provide transactions across heterogeneous technologies, but keep them internal by managing both state changes and messaging within the stream processing framework. The overhead of the transaction protocol can be amortized by processing several input messages within a single transaction.
+
+**Idempotence**
+
+
 ## Summary
 
 <!-- References -->
