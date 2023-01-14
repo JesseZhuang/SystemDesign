@@ -486,6 +486,32 @@ Previsouly discussed on page 360 in "Exactly-once message processing" in the con
 
 **Idempotence**
 
+Our goal is to discard the partial output of faile tasks so they can be safely retried without taking effect twice. Distributed transactions are one way, another is idempotence [97].
+
+Setting a key in key-value store to some fixed value is idempotent, whereas incrementing a counter is not. If an operation is not natually idempotent, it can often be made idempotent with a bit of extra metadata. When consuming from Kafka, every message has a persistent monotonically increasing offset. When writing to external DB, you can include the offset to tell whether an update has already been applied and avoid performing the same update again.
+
+State handling in Storm's Trident is based on a similar idea [78]. Relying on idempotence implies:
+
+1. restarting a failed task must replay same messages in the same order (a log based message broker does this)
+1. the processing must be deterministic
+1. no other node may concurrently update the same value
+
+When failing over from one processing node to another, fencing (p301) may prevent interference from a node thought to be dead but actually active. Idempotent operations may achieve exactly-once semantics with only a small overhead.
+
+**Rebuilding state after a failure**
+
+Stream processing may require state and must ensure recover after failure.
+
+1. any windowed aggregations such as counters, averages, and histograms
+1. any tables and indexes used for joins
+
+One option is to keep the state in remote DB and replicate it. Although querying a remote DB for each message can be slow (p473, stream-table join). An alternative is to keep state local to stream processor and replicate periodically. When recovering, the new task can read the replicated state and resume processing without data loss.
+
+For example, Flink periodically snapshots operator state and writes them to a durable storage such as HDFS [92,93]; Samza and Kafka streams replicate by sending them to a dedicated Kafka topic with log compaction, similar to change data capture [84],[100]. VoltDB replicates state by redundantly processing each message on several nodes (p252, actual serial execution).
+
+In some cases, state can be rebuilt from input streams and may not need to be replicated. If the state consists of aggregations over a fairly short window, it may be fast to simply replay. If the state is a local replica of a DB maintainted by change data capture, the DB can be rebuilt from the log-compacted change stream.
+
+The trade-offs depend on the performance characteristics and may shift as storage and networking technologies evolve. In some systems, network delay may be lower than disk access latency, network bandwidth may be comparable to disk bandwidth.
 
 ## Summary
 
