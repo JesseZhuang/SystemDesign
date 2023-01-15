@@ -515,5 +515,13 @@ The trade-offs depend on the performance characteristics and may shift as storag
 
 ## Summary
 
+In some ways, stream processing is very much like the batch processing in Chapter 10, but done continuously on unbounded (never-ending) streams rather than on a fixed-size input. From this perspective, message brokers and event logs serve as the streaming equivalent of a filesystem.
+
+Two types of message brokers:
+
+1. AMQP/JMS-style. Broker assigns messages to consumers and consumers ackowledge after successful processing. Message is deleted after ack. The approach is appropriate as an async form or RPC (see message-passing dataflow on p136), for example in a task queue, the order is not important and no need to go back and read old messages after processed.
+1. Log-based. Assigns all messages in a partition to the same consumer node, and always deliver messages in the same order. Parallelism is achieved through partitioning. Consumers track progress by checkpointing the offset of the last message processed. The broker retains messages on disk, so it is possible to reread old messages.
+
+
 <!-- References -->
 
