@@ -48,7 +48,30 @@ There is a move towards systems tolerating loss of entire machines, by using sof
 
 ### 1.2.2 Software Errors
 
-### 1.2.3
+Typically hardware faults are random and independent except for weak correlations: temperature in the server rack.
+
+Another category is systematic error [8]. Such faults are harder to anticipate and because they are correlated across nodes, they will cause many more system failures than hardware faults [9]. Examples:
+
+- leap second on June 30 2012 causing many applications to hang simultaneously due to a bug in linux kernel [9]
+- a runaway process using up resource: cpu, memory, disk, or network bandwidth
+- a dependent service slow down, unresponsive, or returning corrupted responses
+- cascading failures, when a small fault in one component triggers a fault in another, which in turn triggers further [10]
+
+These bugs often lie dormant for a long time until triggered by an unusual set of circumstances. Assumption may no longer be true [11].
+
+Lots of small things can help:
+
+1. carefully thinking about assumptions and interactions
+1. thorough testing
+1. process isolation
+1. allowing process to crash and restart
+1. measuring, monitoring, and analyzing behavior in prod
+1. constantly check gurantee (e.g., messaging system incoming messages == outgoing)
+
+
+### 1.2.3 Human Errors
+
+### 1.2.4
 
 ## 1.1 Scalability
 ## 1.1 Maintainability
