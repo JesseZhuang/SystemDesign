@@ -71,10 +71,25 @@ Lots of small things can help:
 
 ### 1.2.3 Human Errors
 
-### 1.2.4
+One study found configuration errors by operators were the leading cause of outages, whereas hardware faults is 10-25% [13].
 
-## 1.1 Scalability
-## 1.1 Maintainability
+- Design in a way to minimize opprotunities for error. Well-designed APIs, abstractions, and admin interfaces make it easy to do "the right thing". Balance not to be too strict so people will work around.
+- Provide fully-featured non-production sandbox environments using real data without affecting real users.
+- Testing thoroughly. Unit tests, whole-system integration tests, and manual tests [3]. Automated tests is widely used, well understood, and sepecially valuable in covering corner cases rarely arise in normal operation.
+- Allow quick and easy recovery from human errors, minimize impact. Fast to roll back configuration chagnes, roll out new code gradually (unexpected bugs only affect a small subset of users), and provide tools to recompute data (old computation incorrect).
+- Detailed and clear monitoring, performance and error rates, referred to as telemetry (after rocket launch [14]).
+- Implement good management practices and training
+
+
+### 1.2.4 How Important Is Reliability?
+
+Consider a parent who stores pictures of videos of all children in your photo application [15]. Would they know how to restore from DB corruption?
+
+You may choose to sacrifice reliability to reduce develoment cost, e.g., when developing a prototype product for an unproven market. Or operational cost, e.g., for a service with a narrow profit margin. But should be conscious when cutting corners.
+
+## 1.3 Scalability
+## 1.4 Maintainability
+## 1.5 Summary
 
 <!-- references -->
 
