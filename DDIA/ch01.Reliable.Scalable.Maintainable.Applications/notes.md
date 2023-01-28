@@ -88,6 +88,55 @@ Consider a parent who stores pictures of videos of all children in your photo ap
 You may choose to sacrifice reliability to reduce develoment cost, e.g., when developing a prototype product for an unproven market. Or operational cost, e.g., for a service with a narrow profit margin. But should be conscious when cutting corners.
 
 ## 1.3 Scalability
+
+One common reason for degradation is increasing load, e.g., 10k-100k concurrent users, or 1 to 10 million.
+
+Scalability is not 1D label. "How can we add computing resources to handle the additional load?"
+
+### 1.3.1 Describing Load
+
+The best choice of load parameters depends on the system architecture:
+
+- QPS web server
+- DB read/write ratio
+- number of simultaneous users in a chat room
+- cache hit rate
+- perhaps average case
+- perhaps a number of extreme cases is the bottleneck
+
+Using twitter 2012 data as example [16].
+
+Two main operations:
+
+1. post tweet 4.6k avg, 12k peak QPS
+1. home timeline 300k QPS
+
+Handling 12k QPS tweet write is fairly easy. However, twitter's scaling challenge is due to fan-out (a term borrowed from electrical engineering, describing number of logic gate inputs connected to another gate's output. The output need to suplly enough current to drive all the attached inputs. In transaction processing systems, describing number of requests to other services in order to serve one imncoming request).
+
+Broadly two ways to implement:
+
+1, Posting simply inserts. Timeline look up all and merge.
+
+```sql
+SELECT tweets.*, users.* FROM tweets
+  JOIN users ON tweets.sender_id = users.id 
+  JOIN follows ON follows.followee_id = users.id
+  WHERE follows.follower_id = current_user
+```
+
+2, Maintain a cache for timeline, insert new tweet to follower's caches.
+
+The first version of twitter used approach 1, but the systems struggled to keep up with the timeline queries. The average rate of published tweets is almost two orders of magnitude lower than the rate of timeline reads. It's preferrable to do more work at write time and less at read time.
+
+On average, a tweet is delivered to avout 75 followers, so 4.6k QPS becomes 345k to the timeline caches. This average hides that number of followers varies wildly. Some users have over 30 million followers.
+
+The distribution of followers per user (weighted by how often those users tweet) is a key load parameter for discussing scalability, since it determines the fan-out load.
+
+Twitter is moving to a hybrid of the two approaches. Celebrities are excepted from this fan-out.
+
+### 1.3.2 Describing Performance
+### 1.3.3 Approaches for Coping with Load
+
 ## 1.4 Maintainability
 ## 1.5 Summary
 
@@ -97,4 +146,6 @@ You may choose to sacrifice reliability to reduce develoment cost, e.g., when de
 
 [4]: Yury Izrailevsky and Ariel Tseitlin: “The Netflix Simian Army,” techblog.net‐ flix.com, July 19, 2011.
 
-[7] Laurie Voss: “AWS: The Good, the Bad and the Ugly,” blog.awe.sm, December 18, 2012.
+[7]: Laurie Voss: “AWS: The Good, the Bad and the Ugly,” blog.awe.sm, December 18, 2012.
+
+[16]:
