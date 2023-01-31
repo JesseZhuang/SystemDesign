@@ -135,6 +135,36 @@ The distribution of followers per user (weighted by how often those users tweet)
 Twitter is moving to a hybrid of the two approaches. Celebrities are excepted from this fan-out.
 
 ### 1.3.2 Describing Performance
+
+- when increase a load parameter and keep the system resources (cpu, memory, network bandwidth) unchanged, how is performance affected
+- when increase a load parameter, how much to increase the resources if you want to keep performance unchanged?
+
+In a batch processing system such as Hadoop, we usually care about throughput-number of records we can process per second, or the total time to run a job on a dataset of a certain size (in an ideal world, the running time of a batch job is the size of the dataset devided by the throughput. In practice, running time is often longer due to skew, where data is not spread evently across workers). In online systems, what's usually more important is the service's response time.
+
+Latency (the duration that a request is waiting to be handled) and response time (what the client sees, including network delays and queueing delays) are not the same. 
+
+Random additional latency can be introduced by
+
+- a context switch to a background process
+- loss of a network package and tcp transmission
+- a garbage collection pause
+- a page fault forcing a read from a disk
+- mechanical vibrations in the server rack [18]
+
+Median, 50th percentile, p50. Note if the user makes several requests over the course of a session or because several resources are included in a single page, the probability of at least one request is slower than median is much greater than 50%.
+
+High percentiles of response times, also known as tail latencies are important because they directly affect users' experience. Customer with the slowest requests are often those who have the most data on their accounts because they have made many purchases, the most valuable customer [19]. Amazon has also observed that a 100 ms increase in response time reduces sales by 1% [20]. A 1-second slowdown reduces customer satisfaction metric by 16% [21],[22]. Optimizing the p99.99 percentile was deemed too expensive and to not yield enough benefit for Amazon's purposes.
+
+Percentiles are often used in service level objectives (SLOa) and service level agreements (SLAs). For example, the service is considered up if p50 < 200 ms and p99 is < 1 s. Availability is 99.9%.
+
+Queueing delays often account for a large part of the response time at high percentiles. It only takes a small number of slow requests to hold up the processing of subsequent requests, known as head-of-line blocking. 
+
+Even if only a small percentage of backend calls are slow, the chance of gettign a slow call increases if an end-user request requires multiple back-end calls, tail latency amplification.
+
+You need to efficiently calculate response time percentiles. You may want to keep a rolling window of the last 10 minutes. The naive implementation is to keep a list and sort that list every minute. There are algorithms that can calculate a good approximation at minimal cpu and memory cost, such as forward decay [25], t-digest [26], or HdrHistogram [27]. Beaware that averaging percentiles, e.g., to reduce the time resolution or to combine data from several machines, is mathematically meaningless. The right way of aggregating response data is to add the histograms [28].
+
+
+
 ### 1.3.3 Approaches for Coping with Load
 
 ## 1.4 Maintainability
@@ -149,3 +179,13 @@ Twitter is moving to a hybrid of the two approaches. Celebrities are excepted fr
 [7]: Laurie Voss: “AWS: The Good, the Bad and the Ugly,” blog.awe.sm, December 18, 2012.
 
 [16]:
+
+[19]:
+
+[25]:
+
+[26]:
+
+[27]:
+
+[28]:
