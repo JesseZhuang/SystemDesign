@@ -167,6 +167,25 @@ You need to efficiently calculate response time percentiles. You may want to kee
 
 ### 1.3.3 Approaches for Coping with Load
 
+An architecture appropriate for one level of load is unlikely to cope with 10 times that load.
+
+People often talk of a dichotomy between scalign up (vertical scaling, more powerful machine) and scaling out (horizontal scaling, multiple smaller machines). Distributing load across multiple machines is known as a shared-nothing architecture.
+
+Some systems are elastic, whereas other systems are scaled manually. An elastic system can be useful if hoad is highly unpredicatable, but manually scaled sytems are simpler and may have fewer operational surprises.
+
+There is no magic scaling sauce, a generic one-size-fits-all scalable architecture. The problem may be
+
+- volume of reads
+- volume of writes
+- volume of data to store
+- complexity of the data
+- response time requirements
+- the access patterns
+
+For example, a system to handle 100k QPS, each 1kB in size looks very different from one for 3 request per minute, each 2 GB in size. Although the two have the same data throughput 6 GB per minute.
+
+An architecture is built around assumptions of the load parameters. If those assumptions turn out to be wrong, the effort for scaling is at best wasted, at worst counterproductive. In an early-stage startup it is usually more important to be able to iterate quickly on product features than to scale to some hypothetical future load.
+
 ## 1.4 Maintainability
 ## 1.5 Summary
 
