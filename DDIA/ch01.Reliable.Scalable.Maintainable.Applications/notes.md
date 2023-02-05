@@ -187,6 +187,28 @@ For example, a system to handle 100k QPS, each 1kB in size looks very different 
 An architecture is built around assumptions of the load parameters. If those assumptions turn out to be wrong, the effort for scaling is at best wasted, at worst counterproductive. In an early-stage startup it is usually more important to be able to iterate quickly on product features than to scale to some hypothetical future load.
 
 ## 1.4 Maintainability
+
+### 1.4.1 Operability: Making Life Easy for Operations
+
+Good operations can often work around the limitations of bad or incomplete software but good software cannot run reliably with bad operations [12].
+
+Operations teams typically are responsible for following and more [29]:
+
+- monitoring system health and quickly restore if it goes into a bad state
+- tracking down the cause of problems such as system failures and degraded performance
+- keeping software and platforms up to date, including security patches
+- keeping tabs on how different systems affect each other, so that a problematic change can be avoided before it causes damage
+- anticipating future problems and solving them before they occur (e.g., capacity planning)
+- establishing good practices and tools for deployment, configuration management, and more
+- performing complex maintenance tasks, such as moving an application from one platform to another
+- maintaining the security of the system as configuration changes are made
+- defining processes that make operations preditable and help keep the production environment stable
+- preserving the organization's knowledge about the system, even as individual people come and go
+
+### 1.4.2 Simplicity: Managing Complexity
+### 1.4.3 Evovability:
+
+
 ## 1.5 Summary
 
 <!-- references -->
@@ -196,6 +218,8 @@ An architecture is built around assumptions of the load parameters. If those ass
 [4]: Yury Izrailevsky and Ariel Tseitlin: “The Netflix Simian Army,” techblog.net‐ flix.com, July 19, 2011.
 
 [7]: Laurie Voss: “AWS: The Good, the Bad and the Ugly,” blog.awe.sm, December 18, 2012.
+
+[12]:
 
 [16]:
 
@@ -208,3 +232,5 @@ An architecture is built around assumptions of the load parameters. If those ass
 [27]:
 
 [28]:
+
+[29]:
