@@ -206,10 +206,37 @@ Operations teams typically are responsible for following and more [29]:
 - preserving the organization's knowledge about the system, even as individual people come and go
 
 ### 1.4.2 Simplicity: Managing Complexity
-### 1.4.3 Evovability:
 
+A software project mired in complexity is sometimes described as a big ball of mud [30].
+
+- explosion of the state space
+- tight coupling of modules
+- tangled dependencies
+- inconsistent naming and terminology
+- hacks for performance
+- special casting workaround
+
+Mosley and Marks [32] define complexity as accidental if it is not inherent in the problem that the software solves but arises only from the implementation.
+
+One of the best tools we have for removing accidental complexity is abstraction. For example, high level programming languages are abstractionsthat hide machine code, CPU registers, and syscalls. SQL is an abstraction that hides complex on-disk and in-memory data structures, concurrent requests, and inconsistencies after crashes.
+
+### 1.4.3 Evovability: Making Change Easy
+
+- learn new facts
+- previously unanticipated use cases emerge
+- business priorities change
+- users request new features
+- regulatory requirements change
+- platform upgrade or replacement
+- growth of the system forces architectural changes
+
+Agile working patterns provide a framework for adapting to change. For example, test-driven development (TDD) and refactoring.
 
 ## 1.5 Summary
+
+Functional requirements: what it shold do, such as allowing data to be stored, retrieved, searched, and processed in various ways. 
+
+Non-functional requirements: general properties like security, reliability, compliance, scalability, compatibility, and maintainability.
 
 <!-- references -->
 
@@ -219,18 +246,22 @@ Operations teams typically are responsible for following and more [29]:
 
 [7]: Laurie Voss: “AWS: The Good, the Bad and the Ugly,” blog.awe.sm, December 18, 2012.
 
-[12]:
+[12]: Jay Kreps: “Getting Real About Distributed System Reliability,” blog.empathy‐ box.com, March 19, 2012.
 
-[16]:
+[16]: Raffi Krikorian: “Timelines at Scale,” at QCon San Francisco, November 2012.
 
-[19]:
+[19]: Giuseppe DeCandia, Deniz Hastorun, Madan Jampani, et al.: “Dynamo: Amazon’s Highly Available Key-Value Store,” at 21st ACM Symposium on Operating Systems Principles (SOSP), October 2007.
 
-[25]:
+[25]: Graham Cormode, Vladislav Shkapenyuk, Divesh Srivastava, and Bojian Xu: “Forward Decay: A Practical Time Decay Model for Streaming Systems,” at 25th IEEE International Conference on Data Engineering (ICDE), March 2009.
 
-[26]:
+[26]: Ted Dunning and Otmar Ertl: “Computing Extremely Accurate Quantiles Using t-Digests,” github.com, March 2014.
 
-[27]:
+[27]: Gil Tene: “HdrHistogram,” hdrhistogram.org.
 
-[28]:
+[28]: Baron Schwartz: “Why Percentiles Don’t Work the Way You Think,” vividcor‐tex.com, December 7, 2015.
 
-[29]:
+[29]: James Hamilton: “On Designing and Deploying Internet-Scale Services,” at 21st Large Installation System Administration Conference (LISA), November 2007.
+
+[30]: Brian Foote and Joseph Yoder: “Big Ball of Mud,” at 4th Conference on Pattern Languages of Programs (PLoP), September 1997.
+
+[32]: Ben Moseley and Peter Marks: “Out of the Tar Pit,” at BCS Software Practice Advancement (SPA), 2006.
