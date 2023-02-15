@@ -1,5 +1,12 @@
 # Data Models and Query Languages
 
+Most applications are built by layering one data model on top of another. For each layer, the key question is: how is it represented in terms of the next lower layer. For example:
+
+1. As an application developer, you model the real word in terms of objects or data structures, and APIs that manipulate those data structures.
+1. You express the data structures in terms of a general-purpose data model, such as JSON or XML documents, tables in a relational database, or a graph model.
+1. The engineers who built your DB software decided on a way of representing that JSON/XML/relational/graph data in terms of bytes in memory, on disl, or on a network. The representation may allow query, search, manipulation, and processing in various ways.
+1. On yet lower levels, hardware engineers have figured out how to represent bytes in terms of electrical currents, pulses of light, magnetic fields, and more.
+
 ## 2.1 Relational Model Versus Document Model
 
 ### 2.1.1 The Birth of NoSQL
