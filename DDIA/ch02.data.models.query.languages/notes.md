@@ -7,7 +7,25 @@ Most applications are built by layering one data model on top of another. For ea
 1. The engineers who built your DB software decided on a way of representing that JSON/XML/relational/graph data in terms of bytes in memory, on disl, or on a network. The representation may allow query, search, manipulation, and processing in various ways.
 1. On yet lower levels, hardware engineers have figured out how to represent bytes in terms of electrical currents, pulses of light, magnetic fields, and more.
 
+
+Data model has a profound effect on what the software above it can and can't do, it's important to choose one appropriate.
+
 ## 2.1 Relational Model Versus Document Model
+
+Best known data model is probably SQL [1]: data is organized into relations (tables), where each relation is an unordered collection of tuples (rows).
+
+The dominance of relational databases has lasted around 30 years since mid-1980s, an eternity in computing history.
+
+The use cases appear mundane from today's perspective:
+
+- transaction processing: sales, bank transactions, airline reservations, stock-keeping in warehouses
+- batch processing: customer invoicing, payroll, reporting
+
+Other databases at the time forced application developers to think a lot about the internal representation of the data in the database. The goal of the relational model was to hide the implementation detail behind a cleaner interface.
+
+In the 1970s and early 1980s, the network model and the hierarchical model were the main alternatives, but the relational model came to dominate them. Object databases came and went again in the late 1980s and early 1990s. XML databases appeared in the early 2000s, but have only seen niche adoption.
+
+As computers became more powerful and networked, relational model continue to generalize well, beyond their original scope of business data processing, to a broad variety: online publishing, discusssion, social networking, .etc.
 
 ### 2.1.1 The Birth of NoSQL
 ### 2.1.2 The Object-Relational Mismatch
@@ -29,5 +47,9 @@ Most applications are built by layering one data model on top of another. For ea
 ### 2.3.5 The Foundation: Datalog
 
 ## 2.4 Summary
+
+<!-- references -->
+
+[1]:
 
 
