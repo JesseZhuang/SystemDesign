@@ -28,6 +28,16 @@ In the 1970s and early 1980s, the network model and the hierarchical model were 
 As computers became more powerful and networked, relational model continue to generalize well, beyond their original scope of business data processing, to a broad variety: online publishing, discusssion, social networking, .etc.
 
 ### 2.1.1 The Birth of NoSQL
+
+The name "NoSQL" is unfortunate, originally intended simply as a catchy Twitter hashtag for a meetup on open source, distributed, nonrelational databases in 2009 [3]. It has been retroactively reinterpreted as Not Only SQL [4].
+
+Driving forces:
+
+1. Greater scalability than relational databases, including very large datasets or very high write throughput
+1. Widespread preference for free and open source software over commercial database products
+1. Specialized query opterations not well supported by the relational model
+1. Frustration with the restrictiveness of relational schemas, desire for a more dynamic and expressive data model
+
 ### 2.1.2 The Object-Relational Mismatch
 ### 2.1.3 Many-to-One and Many-to-Many Relationships
 ### 2.1.4 Are Document Databases Repeating History?
