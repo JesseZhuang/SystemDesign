@@ -50,6 +50,13 @@ For a resume or a LinkedIn profile, the profile as a whole can be identified by 
 1. Later versions of SQL added support for structured datatypes and XML, with support for querying and indexing inside those documents. These features are supported to varying degrees by Orable, IBM DB2, MS SQL Server, and PostegreSQL. A JSON datatype is also supported by some, including IBM DB2, MySQL, and PostgreSQL.
 1. A third options is to encode jobs as a JSON or XML, store as text column and let the application interpret structure and content. In this setup, you typically cannot use the database to query values inside that encoded column.
 
+For a data structure like a resume, which is mostly a self-contained document, a JSON representation is quite appropriate. JSON has the appeal of much simper than XML. Document oriented databses like MongoDB, RethinkDB, CouchDB, and Espresso support this data model.
+
+The JSON representation has better locality than the multi-table schema. If you want to fetch a profile in the relational example, you need to either perform multiple queries (query each table by `user_id`) or perform a messy multi-way join between the user table and its subordinate tables. In the JSON example, all the information is in one place and one query is enough.
+
+The one-to-many relationships from the user to positions, contact info, and education history imply a tree structure, and the JSON makes that explicit.
+
+![](./2-2.1tMTree.png)
 
 ### 2.1.3 Many-to-One and Many-to-Many Relationships
 ### 2.1.4 Are Document Databases Repeating History?
