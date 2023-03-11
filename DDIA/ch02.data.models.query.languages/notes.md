@@ -59,6 +59,11 @@ The one-to-many relationships from the user to positions, contact info, and educ
 ![](./2-2.1tMTree.png)
 
 ### 2.1.3 Many-to-One and Many-to-Many Relationships
+
+In previous example, `region_id` and `industry_id` are given as IDs, not plain-text strings.
+
+When you use an ID, the information meaningful to human is stored only at one-place. The advantage is the ID never has to change and since it is not meaningful to human. The info it identifies can change and ID remains the same. If the information is duplicated, all the redudant copies need to be updated. That incurs write overheads, and risks inconsistences (some copies updated and some not). Removing such duplication is the key idea of normalization in relational databses (The distinctions among the normal forms are of little practical impact. As a rule of thumb, duplicating values indicate the schema is not normalized).
+
 ### 2.1.4 Are Document Databases Repeating History?
 ### 2.1.5 Relational Versus Document Databases Today
 
