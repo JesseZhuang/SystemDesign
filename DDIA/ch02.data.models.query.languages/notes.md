@@ -64,7 +64,20 @@ In previous example, `region_id` and `industry_id` are given as IDs, not plain-t
 
 When you use an ID, the information meaningful to human is stored only at one-place. The advantage is the ID never has to change and since it is not meaningful to human. The info it identifies can change and ID remains the same. If the information is duplicated, all the redudant copies need to be updated. That incurs write overheads, and risks inconsistences (some copies updated and some not). Removing such duplication is the key idea of normalization in relational databses (The distinctions among the normal forms are of little practical impact. As a rule of thumb, duplicating values indicate the schema is not normalized).
 
+Normalizing this data requires many-to-one relationships, which don't fit nicely into the document model. In document databases, joins are not needed for one-to-many tree structures, and support for joins is often weak (supported in RethinkDB, not in MongoDB, only supported in predeclared views in CouchDB). If the database does not support joins, you have to emulate joins in applicaiton code by making multiple queries.
+
+Moreover, initial version of an application may fit well in a join-free document model. Data has a tendency of becoming more interconnected as features are added.
+
 ### 2.1.4 Are Document Databases Repeating History?
+
+The most popular database for business data processing in the 1970s was IBM's Information Management System (IMS), which used a fairly simple data model called he hirearchical model. It has some remarkable similarities to the JSON model used by document databases.
+
+Like document databases, IMS worked well for one-to-many relationships, but it made many-to-many relationships difficult, and did not support joins. Developers had to decide whether to duplicate (denormalize) data or to manually resolve references from one record to another. These problems of the 1960s and '70s were much like the problems with document databases today [15].
+
+Various solutions were proposed to solve the limitations of the hierarchical model. The two most prominent were the relational model (which became SQL) and the network model (which initially had a large following but eventually faded into obscurity). The "great debate" between these two camps lasted for much of the 1970s.
+
+**The network model**
+
 ### 2.1.5 Relational Versus Document Databases Today
 
 ## 2.2 Query Languages for Data
@@ -87,3 +100,4 @@ When you use an ID, the information meaningful to human is stored only at one-pl
 [1]:
 
 
+[15]:
