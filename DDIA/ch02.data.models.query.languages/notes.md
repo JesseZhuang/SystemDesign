@@ -84,7 +84,15 @@ The links in the network model were not foreign keys but more like pointers (whi
 
 **The relational model**
 
+The relational model lay out all the data in the open: a relation (table) is simply a collection of tuples (rows). You can insert a new row into any table without worring about foreign key relationships. Foreign key constraints allow to restrict modifications, but such constraints are not required by the relational model. Even with constraints, joins on foreign keys are performed at query time, whereas in CODASYL, the join was effectively done at insert time.
 
+The "access path" are made automatically by the query optimizer, not by the application developer. If you want to query in new ways, you can declare a new index. You don't need to change your queries to take advantage of a new index. The relational model made it much easier to add new features to applications.
+
+Query optimizers are complicated beasts and have consumed many years of research and development [18]. But you only need to build a query optimizer once.
+
+**Comparison to document databases**
+
+Document databases reverted to the hierarchical model in one aspect: storing nested records (one-to-many relationships) within their parent record rather than in a separate table. However, when it comes to representing many-to-one and many-to-many relationships, relational and document databases are not fundamentally different. The related item is referenced by a unique id, a foreign key in relational model and a document reference in the document model [9]. The id is resolved at read time by using a join or follow-up queries. To date, document databases have not followed the path of CODASYL.
 
 ### 2.1.5 Relational Versus Document Databases Today
 
