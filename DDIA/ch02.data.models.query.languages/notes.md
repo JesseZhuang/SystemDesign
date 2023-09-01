@@ -78,6 +78,14 @@ Various solutions were proposed to solve the limitations of the hierarchical mod
 
 **The network model**
 
+The network model was standarized by a committee called the Conference on Data Systems Languages (CODASYL). The CODASYL model was a generalization of the hirearchical model. In the tree structure of the hierarchical model, every record has exactly one parent; in the network model, a record could have multiple parents. This allowed many-to-one and many-to-many relationships to be modeled.
+
+The links in the network model were not foreign keys but more like pointers (while still being stored on disk). The only way of accessing a record was to follow a path from a root record along these chains of links. This was called an access path. If a record had multiple parents, the application code had to keep track of all the various relationships. Even CODASYL committee members admitted that this was like navigating around an n-dimensional data space [17].
+
+**The relational model**
+
+
+
 ### 2.1.5 Relational Versus Document Databases Today
 
 ## 2.2 Query Languages for Data
