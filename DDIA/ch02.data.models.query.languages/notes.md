@@ -96,6 +96,16 @@ Document databases reverted to the hierarchical model in one aspect: storing nes
 
 ### 2.1.5 Relational Versus Document Databases Today
 
+The main arguments in favor of the document data model are schema flexibility, better performance due to locality, and that for some applications it is closer to the data structures used by the application.
+
+**Which data model leads to simpler application code?**
+
+If the data in your application has a document-like structure (a tree of one-to-many relationships, typically entire tree is loaded at once), it's probably a good idea to use a document model.
+
+If your application does use many-to-many relationships, the document model becomes less appealing.
+
+For highly connected data, the document model is awkward, the relational model is acceptable, and graph models are the most natual.
+
 ## 2.2 Query Languages for Data
 
 ### 2.2.1 Declarative Queries on the Web
@@ -115,5 +125,6 @@ Document databases reverted to the hierarchical model in one aspect: storing nes
 
 [1]:
 
+[9]:
 
 [15]:
