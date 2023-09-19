@@ -106,7 +106,34 @@ If your application does use many-to-many relationships, the document model beco
 
 For highly connected data, the document model is awkward, the relational model is acceptable, and graph models are the most natual.
 
+**Schema flexibility in the document model**
+
+Most document databases, xml and json support in relational databases do not enforce schema or optional. Document databases are sometimes called schemaless, but that is misleading. There is an implicit schema not enforced by the database. A more accurate term is schema-on-read, in contrast with schema-on-write (traditional approach with relational databases).
+
+Schema-on-read is similar to dynamic (runtime) type checking in programming lan‐ guages, whereas schema-on-write is similar to static (compile-time) type checking. Just as the advocates of static and dynamic type checking have big debates about their relative merits [22], enforcement of schemas in database is a contentious topic, and in general there’s no right or wrong answer.
+
+The difference between the approaches is particularly noticeable in situations where an application wants to change the format of its data. The schema-on-read approach is advantageous if the items in the collection don’t all have the same structure for some reason (i.e., the data is heterogeneous)—for example, because:
+
+- There are many different types of objects, and it is not practical to put each type of object in its own table.
+- The structure of the data is determined by external systems over which you have no control and which may change at any time.
+
+**Data locality for queries**
+
+A document is usually stored as a single continuous string, encoded as JSON, XML, or a binary variant thereof (such as MongoDB’s BSON). If your application often needs to access the entire document (for example, to render it on a web page), there is a performance advantage to this storage locality. If data is split across multiple tables, like in Figure 2-1, multiple index lookups are required to retrieve it all, which may require more disk seeks and take more time.
+
+It’s worth pointing out that the idea of grouping related data together for locality is not limited to the document model. For example, Google’s Spanner database offers the same locality properties in a relational data model, by allowing the schema to declare that a table’s rows should be interleaved (nested) within a parent table [27]. Oracle allows the same, using a feature called multi-table index cluster tables [28]. The column-family concept in the Bigtable data model (used in Cassandra and HBase) has a similar purpose of managing locality [29].
+
+**Convergence of document and relational databases**
+
+Most relational database systems (other than MySQL) have supported XML since the mid-2000s. Many relational databases have also added support for JSON.
+
+On the document database side, RethinkDB supports relational-like joins in its query language, and some MongoDB drivers automatically resolve database references.
+
+A hybrid of the relational and document models is a good route for databases to take in the future.
+
 ## 2.2 Query Languages for Data
+
+Declarative languages often lend themselves to parallel execution. Imperative code is very hard to parallelize across mul‐ tiple cores and multiple machines, because it specifies instructions that must be per‐ formed in a particular order.
 
 ### 2.2.1 Declarative Queries on the Web
 ### 2.2.2 MapReduce Querying
@@ -125,6 +152,22 @@ For highly connected data, the document model is awkward, the relational model i
 
 [1]:
 
+[3]:
+
+[4]:
+
 [9]:
 
 [15]:
+
+[17]:
+
+[18]:
+
+[22]:
+
+[27]:
+
+[28]:
+
+[29]:
