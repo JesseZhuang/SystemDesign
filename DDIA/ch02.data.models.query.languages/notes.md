@@ -136,7 +136,12 @@ A hybrid of the relational and document models is a good route for databases to 
 Declarative languages often lend themselves to parallel execution. Imperative code is very hard to parallelize across mul‐ tiple cores and multiple machines, because it specifies instructions that must be per‐ formed in a particular order.
 
 ### 2.2.1 Declarative Queries on the Web
+
+In a web browser, using declarative CSS styling is much better than manipulating styles imperatively in JavaScript. Similarly, in databases, declarative query languages like SQL turned out to be much better than imperative query APIs. IMS and CODASYL both used imperative query APIs. Applications typically used COBOL code to iterate over records in the database, one record at a time.
+
 ### 2.2.2 MapReduce Querying
+
+MapReduce [33] is neither a declarative query language nor a fully imperative query API, but somewhere in between. A limited form of MapReduce is supported by some NoSQL datastores, including MongoDB and CouchDB, as a mechanism for performing read-only queries across many documents. MongoDB 2.2 added support for a declarative query language called the aggregation pipeline [9].
 
 ## 2.3 Graph-Like Data Models
 
@@ -171,3 +176,5 @@ Declarative languages often lend themselves to parallel execution. Imperative co
 [28]:
 
 [29]:
+
+[33]:
