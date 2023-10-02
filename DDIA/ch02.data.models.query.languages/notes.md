@@ -161,7 +161,27 @@ A graph can easily be extended to accommodate changes in your application’s da
 
 ### 2.3.2 The Cypher Query Language
 
+Cypher is a declarative query language for property graphs, created for the Neo4j graph database [37]. (It is named after a character in the movie The Matrix and is not related to ciphers in cryptography [38].)
 
+
+```
+CREATE
+  (NAmerica:Location {name:'North America', type:'continent'}),
+  (USA:Location      {name:'United States', type:'country'  }),
+  (Idaho:Location    {name:'Idaho',         type:'state'    }),
+  (Lucy:Person       {name:'Lucy' }),
+  (Idaho) -[:WITHIN]->  (USA)  -[:WITHIN]-> (NAmerica),
+  (Lucy)  -[:BORN_IN]-> (Idaho)
+```
+To find people who emigrated from US to Europe:
+
+```
+MATCH
+  (person) -[:BORN_IN]->  () -[:WITHIN*0..]-> (us:Location {name:'United States'}),
+(person) -[:LIVES_IN]-> () -[:WITHIN*0..]-> (eu:Location {name:'Europe'}) RETURN person.name
+```
+
+There are several possible ways of executing the query. The description given here suggests that you start by scanning all the people in the database, examine each person’s birthplace and residence, and return only those people who meet the criteria. But equivalently, you could start with the two Location vertices and work backward. If there is an index on the name property, you can probably efficiently find the two vertices representing the US and Europe. The query optimizer automatically chooses the strategy that is predicted to be the most efficient.
 
 ### 2.3.3 Graph Queries in SQL
 ### 2.3.4 Triple-Stores and SPARQL
@@ -196,3 +216,7 @@ A graph can easily be extended to accommodate changes in your application’s da
 [33]:
 
 [35]:
+
+[37]:
+
+[38]:
