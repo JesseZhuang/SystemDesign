@@ -145,6 +145,12 @@ MapReduce [33] is neither a declarative query language nor a fully imperative qu
 
 ## 2.3 Graph-Like Data Models
 
+If your application has mostly one-to-many relationships (tree-structured data) or no relationships between records, the document model is appropriate. The rela‐ tional model can handle simple cases of many-to-many relationships, but as the con‐ nections within your data become more complex, it becomes more natural to start modeling your data as a graph.
+
+Graphs are not limited to such homogeneous data: an equally powerful use of graphs is to provide a consistent way of storing completely different types of objects in a single datastore. For example, Facebook maintains a single graph with many different types of vertices and edges: vertices represent people, locations, events, checkins, and comments made by users; edges indicate which people are friends with each other, which checkin hap‐ pened in which location, who commented on which post, who attended which event, and so on [35].
+
+In this section we will discuss the property graph model (implemented by Neo4j, Titan, and InfiniteGraph) and the triple-store model (implemented by Datomic, AllegroGraph, and others).
+
 ### 2.3.1 Property Graphs
 ### 2.3.2 The Cypher Query Language
 ### 2.3.3 Graph Queries in SQL
@@ -178,3 +184,5 @@ MapReduce [33] is neither a declarative query language nor a fully imperative qu
 [29]:
 
 [33]:
+
+[35]:
