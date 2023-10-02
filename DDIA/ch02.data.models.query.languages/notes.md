@@ -152,7 +152,17 @@ Graphs are not limited to such homogeneous data: an equally powerful use of grap
 In this section we will discuss the property graph model (implemented by Neo4j, Titan, and InfiniteGraph) and the triple-store model (implemented by Datomic, AllegroGraph, and others).
 
 ### 2.3.1 Property Graphs
+
+You can think of a graph store as consisting of two relational tables, one for vertices and one for edges. By using different labels for different kinds of relationships, you can store several different kinds of information in a single graph, while still maintaining a clean data model.
+
+A few things that would be difficult to express in a traditional relational schema, such as different kinds of regional structures in different countries (France has départements and régions, whereas the US has counties and states), quirks of history such as a country within a country (ignoring for now the intricacies of sovereign states and nations), and varying granularity of data (Lucy’s current residence is specified as a city, whereas her place of birth is specified only at the level of a state).
+
+A graph can easily be extended to accommodate changes in your application’s data structures. For instance, you could use it to indicate any food allergies they have.
+
 ### 2.3.2 The Cypher Query Language
+
+
+
 ### 2.3.3 Graph Queries in SQL
 ### 2.3.4 Triple-Stores and SPARQL
 ### 2.3.5 The Foundation: Datalog
