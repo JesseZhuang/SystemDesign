@@ -184,7 +184,13 @@ MATCH
 There are several possible ways of executing the query. The description given here suggests that you start by scanning all the people in the database, examine each person’s birthplace and residence, and return only those people who meet the criteria. But equivalently, you could start with the two Location vertices and work backward. If there is an index on the name property, you can probably efficiently find the two vertices representing the US and Europe. The query optimizer automatically chooses the strategy that is predicted to be the most efficient.
 
 ### 2.3.3 Graph Queries in SQL
+
+Graph data can be represented in a relational database. In a relational database, you usually know in advance which joins you need in your query. In a graph query, you may need to traverse a variable number of edges before you find the vertex you’re looking for— that is, the number of joins is not fixed in advance.
+
+In Cypher, ``:WITHIN*0..`` expresses that fact very concisely: it means “follow a WITHIN edge, zero or more times.” It is like the `*` operator in a regular expression. Since SQL:1999, this idea of variable-length traversal paths in a query can be expressed using something called recursive common table expressions (the WITH RECURSIVE syntax). The same query is 4 lines in Cyper and 29 lines in SQL.
+
 ### 2.3.4 Triple-Stores and SPARQL
+
 ### 2.3.5 The Foundation: Datalog
 
 ## 2.4 Summary
