@@ -191,6 +191,51 @@ In Cypher, ``:WITHIN*0..`` expresses that fact very concisely: it means “follo
 
 ### 2.3.4 Triple-Stores and SPARQL
 
+The triple-store model is mostly equivalent to the property graph model. In a triple-store, all information is stored in the form of very simple three-part state‐ ments: (subject, predicate, object). For example, in the triple (Jim, likes, bananas), Jim is the subject, likes is the predicate (verb), and bananas is the object.
+
+```
+_:lucy     :name   "Lucy".
+_:lucy     :bornIn _:idaho.
+_:idaho    a       :Location.
+_:idaho    :name   "Idaho".
+```
+
+#### The semantic web
+
+The triple-store data model is completely independent of the semantic web—for example, Datomic [40] is a triple-store that does not claim to have anything to do with it. (Technically, Datomic uses 5-tuples rather than triples; the two additional fields are metadata for version‐ ing.) But the two are so closely linked in many people’s minds.
+
+The semantic web is fundamentally a simple and reasonable idea: websites already publish information as text and pictures for humans to read, so why don’t they also publish information as machine-readable data for computers to read? The Resource Description Framework (RDF) [41] was intended as a mechanism for different websites to publish data in a consistent format, allowing data from different websites to be automatically combined into a web of data—a kind of internet-wide “database of everything.”
+
+So far it hasn't shown any sign of being realized in practice. There is also a lot of good work that has come out of the semantic web project. Triples can be a good internal data model for appli‐ cations, even if you have no interest in publishing RDF data on the semantic web.
+
+#### The RDF data model
+
+The Turtle language we used in Example 2-7 is a human-readable format for RDF data. Sometimes RDF is also written in an XML format, which does the same thing much more verbosely—see Example 2-8. Turtle/N3 is preferable as it is much easier on the eyes, and tools like Apache Jena can automatically convert between differ‐ ent RDF formats if necessary.
+
+#### The SPARQL query language
+
+SPARQL is a query language for triple-stores using the RDF data model. (It is an acronym for SPARQL Protocol and RDF Query Language, pronounced “sparkle.”) It predates Cypher, and since Cypher’s pattern matching is borrowed from SPARQL, they look quite similar.
+
+```
+PREFIX : <urn:example:>
+SELECT ?personName WHERE {
+  ?person :name ?personName.
+  ?person :bornIn  / :within* / :name "United States".
+  ?person :livesIn / :within* / :name "Europe".
+}
+```
+
+The same query as before—finding people who have moved from the US to Europe— is even more concise in SPARQL than it is in Cypher.
+
+We discussed how CODASYL and the relational model competed to solve the problem of many-to-many relationships in IMS. At first glance, CODASYL’s network model looks similar to the graph model. Are graph databases the second coming of CODASYL in disguise?
+
+No. They differ in several important ways:
+
+• In CODASYL, a database had a schema that specified which record type could be nested within which other record type. In a graph database, there is no such restriction: any vertex can have an edge to any other vertex. This gives much greater flexibility for applications to adapt to changing requirements.
+• In CODASYL, the only way to reach a particular record was to traverse one of the access paths to it. In a graph database, you can refer directly to any vertex by its unique ID, or you can use an index to find vertices with a particular value.
+• In CODASYL, the children of a record were an ordered set, so the database had to maintain that ordering (which had consequences for the storage layout) and applications that inserted new records into the database had to worry about the positions of the new records in these sets. In a graph database, vertices and edges are not ordered (you can only sort the results when making a query).
+• In CODASYL, all queries were imperative, difficult to write and easily broken by changes in the schema. In a graph database, you can write your traversal in imperative code if you want to, but most graph databases also support high-level, declarative query languages such as Cypher or SPARQL.
+
 ### 2.3.5 The Foundation: Datalog
 
 ## 2.4 Summary
@@ -226,3 +271,5 @@ In Cypher, ``:WITHIN*0..`` expresses that fact very concisely: it means “follo
 [37]:
 
 [38]:
+
+[40]:
