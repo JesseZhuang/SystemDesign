@@ -238,7 +238,11 @@ No. They differ in several important ways:
 
 ### 2.3.5 The Foundation: Datalog
 
+In practice, Datalog is used in a few data systems: for example, it is the query lan‐ guage of Datomic [40], and Cascalog [47] is a Datalog implementation for querying large datasets in Hadoop. Datomic and Cascalog use a Clojure S-expression syntax for Datalog. Datalog define rules that tell the database about new predicates.The Datalog approach requires a different kind of thinking to the other query lan‐ guages discussed in this chapter, but it’s a very powerful approach, because rules can be combined and reused in different queries. It’s less convenient for simple one-off queries, but it can cope better if your data is complex.
+
 ## 2.4 Summary
+
+
 
 <!-- references -->
 
@@ -273,3 +277,5 @@ No. They differ in several important ways:
 [38]:
 
 [40]:
+
+[47]:
