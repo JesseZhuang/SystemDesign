@@ -257,36 +257,36 @@ Although we have covered a lot of ground, there are still many data models left 
 
 <!-- references -->
 
-[1]:
+[1]: Edgar F. Codd: “A Relational Model of Data for Large Shared Data Banks,” Com‐ munications of the ACM, volume 13, number 6, pages 377–387, June 1970. doi: 10.1145/362384.362685
 
-[3]:
+[3]: Pramod J. Sadalage and Martin Fowler: NoSQL Distilled. Addison-Wesley, August 2012. ISBN: 978-0-321-82662-6
 
-[4]:
+[4]: Eric Evans: “NoSQL: What’s in a Name?,” blog.sym-link.com, October 30, 2009.
 
-[9]:
+[9]: “The MongoDB 2.4 Manual,” MongoDB, Inc., 2013.
 
-[15]:
+[15]: Sarah Mei: “Why You Should Never Use MongoDB,” sarahmei.com, November 11, 2013.
 
-[17]:
+[17]: Charles W. Bachman: “The Programmer as Navigator,” Communications of the ACM, volume 16, number 11, pages 653–658, November 1973. doi: 10.1145/355611.362534
 
-[18]:
+[18]: Jsoseph M. Hellerstein, Michael Stonebraker, and James Hamilton: “Architecture of a Database System,” Foundations and Trends in Databases, volume 1, number 2, pages 141–259, November 2007. doi:10.1561/1900000002
 
-[22]:
+[22]: Martin Odersky: “The Trouble with Types,” at Strange Loop, September 2013.
 
-[27]:
+[27]: James C. Corbett, Jeffrey Dean, Michael Epstein, et al.: “Spanner: Google’s Globally-Distributed Database,” at 10th USENIX Symposium on Operating System Design and Implementation (OSDI), October 2012.
 
-[28]:
+[28]: Donald K. Burleson: “Reduce I/O with Oracle Cluster Tables,” dba-oracle.com.
 
-[29]:
+[29]: Fay Chang, Jeffrey Dean, Sanjay Ghemawat, et al.: “Bigtable: A Distributed Stor‐ age System for Structured Data,” at 7th USENIX Symposium on Operating System Design and Implementation (OSDI), November 2006.
 
-[33]:
+[33]: Jeffrey Dean and Sanjay Ghemawat: “MapReduce: Simplified Data Processing on Large Clusters,” at 6th USENIX Symposium on Operating System Design and Imple‐ mentation (OSDI), December 2004.
 
-[35]:
+[35]: Nathan Bronson, Zach Amsden, George Cabrera, et al.: “TAO: Facebook’s Dis‐ tributed Data Store for the Social Graph,” at USENIX Annual Technical Conference (USENIX ATC), June 2013.
 
-[37]:
+[37]: “The Neo4j Manual v2.0.0,” Neo Technology, 2013.
 
-[38]:
+[38]: Emil Eifrem: Twitter correspondence, January 3, 2014.
 
-[40]:
+[40]: “Datomic Development Resources,” Metadata Partners, LLC, 2013.
 
-[47]:
+[47]: Nathan Marz: “Cascalog,” cascalog.org.
