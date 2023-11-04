@@ -68,6 +68,21 @@ For the append-only log database, we make a simple change: we require that the s
 
 ![Figure 3-5](./3-5.sstable.in.memory.index.png)
 
+#### 3.1.2.1 Constructing and maintaining SSTables
+
+Maintaining a sorted structure on disk is possible (see “B-Trees” in the next section), but maintaining it in memory is much easier. There are plenty of well-known tree data structures that you can use, such as red-black trees or AVL trees [2]. With these data structures, you can insert keys in any order and read them back in sorted order.
+
+1. When a write comes in, add it to an in-memory balanced tree data structure (for example, a red-black tree). This in-memory tree is sometimes called a memtable.
+1. When the memtable gets bigger than some threshold—typically a few megabytes—write it out to disk as an SSTable file. This can be done efficiently because the tree already maintains the key-value pairs sorted by key. The new SSTable file becomes the most recent segment of the database. While the SSTable is being written out to disk, writes can continue to a new memtable instance.
+1. In order to serve a read request, first try to find the key in the memtable, then in the most recent on-disk segment, then in the next-older segment, etc.
+1. From time to time, run a merging and compaction process in the background to combine segment files and to discard overwritten or deleted values.
+
+It only suffers from one problem: if the database crashes, the most recent writes (which are in the memtable but not yet written out to disk) are lost. In order to avoid that problem, we can keep a separate log on disk to which every write is immediately appended, just like in the previous section. That log is not in sorted order, but that doesn’t matter, because its only purpose is to restore the memtable after a crash. Every time the memtable is written out to an SSTable, the corresponding log can be discarded.
+
+#### 3.1.2.2 Making an LSM-tree out of SSTables
+
+
+
 ### 3.1.3 B-Trees
 
 ### 3.1.4 Comparing B-Trees and LSM-Trees
