@@ -184,9 +184,23 @@ A secondary index can easily be constructed from a key-value index. The main dif
 
 #### 3.1.5.1 Storing values within the index
 
+The value could be the actual row (document, vertex) or it could be a reference to the row stored elsewhere. In the latter case, the place is know as a heap file, and it stores data in no particular order (append only or keep track of deleted rows in order to overwrite with new data later). The heap file approach is common because it avoids duplicating data when multiple secondary indexes are present: each index just references a location in the heap file, and the actual data is kept in one place.
+
+When updating a value without changing the key, the heap file approach can be quite efficient: the record can be overwritten in place, provided that the new value is not larger than the old value. The situation is more complicated if the new value is larger, as it probably needs to be moved to a new location in the heap where there is enough space. In that case, either all indexes need to be updated to point at the new heap location of the record, or a forwarding pointer is left behind in the old heap location [5].
+
+In some situations, the extra hop from the index to the heap file is too much of a performance penalty for reads, so it can be desirable to store the indexed row directly within an index. This is known as a clustered index. For example, in MySQL’s InnoDB storage engine, the primary key of a table is always a clustered index, and secondary indexes refer to the primary key (rather than a heap file location) [31]. In SQL Server, you can specify one clustered index per table [32].
+
+A compromise between a clustered index (storing all row data within the index) and a nonclustered index (storing only references to the data within the index) is known as a covering index or index with included columns, which stores some of a table’s columns within the index [33]. This allows some queries to be answered by using the index alone (in which case, the index is said to cover the query) [32].
+
+As with any kind of duplication of data, clustered and covering indexes can speed up reads, but they require additional storage and can add overhead on writes. Databases also need to go to additional effort to enforce transactional guarantees, because applications should not see inconsistencies due to the duplication.
+
+#### 3.1.5.2 Multi-column indexes
+
+
 
 
 ## 3.2 Transaction Processing or Analytics?
+
 
 
 ## 3.3 Column-Oriented Storage
@@ -227,3 +241,7 @@ A secondary index can easily be constructed from a key-value index. The main dif
 [23]:
 
 [28]:
+
+[31]:
+
+[32]:
