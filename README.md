@@ -140,6 +140,10 @@ These are the steps I go through mentally in the interviews, followed by actual 
 ## <a name='designques'> Common Design questions </a>
 It generally depends what you are and you will be working on. Also what your level is but these are some of the more frequent interview questions.
 
+* Online Booking, more people than available tickets
+* Slack
+* Google Drive, duplication chunk.
+* Distributed Job Scheduler, distributed lock, FIFO queue 
 * Design amazon's frequently viewed product page (eg. which shows the last 5 items you saw)
 * Design an online poker game for multiplayer. Solve for persistence, concurrency, scale. Draw the ER diagram for this 
 * Design a [url compression system] (http://www.hiredintech.com/system-design/the-system-design-process/)
@@ -157,6 +161,7 @@ It generally depends what you are and you will be working on. Also what your lev
  Let's say we work with the Election Commission. On Counting day, we want to collate the votes received at the lakhs of voting booths all over the country. Each booth has a voting machine, which, when connected to the network, returns an array of the form {[party_id, num_votes],[party_id_2, num_votes_2],...}. We want to collect these and get the current scores in real time. The report we need continuously is how many seats is each party leading in. Please design a system for this.
 * Design a logging system
  (For web applications, it is common to have a large number of servers running the same application, with a load balancer in front to distribute the incoming requests. In this scenario, we want to check and alarm in case an exception is thrown in any of the servers. We want a system that checks for the appearance of specific words, "Exception", "Disk Full" etc. in the logs of any of the servers. How would you design this system?)
+
 
 ## <a name='architecture'>Architectures :</a>
 
