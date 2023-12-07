@@ -276,7 +276,7 @@ A secondary index also needs to be partitioned, and there are two methods:
 1. Document-partitioned indexes (local indexes). This means that only a single partition needs to be updated on write, but a read of the secondary index requires a scatter/gather across all partitions.
 1. Term-partitioned indexes (global indexes). An entry in the secondary index may include records from all partitions of the primary key. When a document is written, several partitions of the secondary index need to be updated; however, a read can be served from a single partition.
 
-By design, every partition operates mostly independently—that’s what allows a parti‐ tioned database to scale to multiple machines. However, operations that need to write to several partitions can be difficult to reason about: for example, what happens if the write to one partition succeeds, but another fails? We will address that question in the following chapters.
+By design, every partition operates mostly independently—that’s what allows a partitioned database to scale to multiple machines. However, operations that need to write to several partitions can be difficult to reason about: for example, what happens if the write to one partition succeeds, but another fails? We will address that question in the following chapters.
 
 ## 6.7 References
 
