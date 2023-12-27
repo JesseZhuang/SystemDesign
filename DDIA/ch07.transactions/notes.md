@@ -642,21 +642,155 @@ Although **deadlocks** can happen with the lock-based read committed isolation l
 
 #### 7.3.2.2 Predicate locks
 
-In the preceding description of locks, we glossed over a subtle but important detail. In “Phantoms causing write skew” on page 250 we discussed the problem of phan‐ toms—that is, one transaction changing the results of another transaction’s search query. A database with serializable isolation must prevent phantoms.
+In the preceding description of locks, we glossed over a subtle but important detail. In “Phantoms causing write skew” we discussed the problem of phantoms—that is, one transaction changing the results of another transaction’s search query. A database with serializable isolation must prevent phantoms.
+
 In the meeting room booking example this means that if one transaction has searched for existing bookings for a room within a certain time window (see Example 7-2), another transaction is not allowed to concurrently insert or update another booking for the same room and time range. (It’s okay to concurrently insert bookings for other rooms, or for the same room at a different time that doesn’t affect the proposed booking.)
-How do we implement this? Conceptually, we need a predicate lock [3]. It works sim‐ ilarly to the shared/exclusive lock described earlier, but rather than belonging to a particular object (e.g., one row in a table), it belongs to all objects that match some search condition, such as:
+
+How do we implement this? Conceptually, we need a predicate lock. It works similarly to the shared/exclusive lock described earlier, but rather than belonging to a particular object (e.g., one row in a table), it **belongs to all objects that match some search condition**, such as:
 
 ```sql
 SELECT * FROM bookings
   WHERE room_id = 123 AND end_time > '2018-01-01 12:00' AND start_time < '2018-01-01 13:00';
 ```
+
 A predicate lock restricts access as follows:
-1. If transaction A wants to read objects matching some condition, like in that SELECT query, it must acquire a shared-mode predicate lock on the conditions of the query. If another transaction B currently has an exclusive lock on any object matching those conditions, A must wait until B releases its lock before it is allowed to make its query.
+1. If transaction A wants to read objects matching some condition, like in that `SELECT` query, it must acquire a **shared-mode predicate lock** on the conditions of the query. If another transaction B currently has an exclusive lock on any object matching those conditions, A must wait until B releases its lock before it is allowed to make its query.
 1. If transaction A wants to insert, update, or delete any object, it must first check whether either the old or the new value matches any existing predicate lock. If there is a matching predicate lock held by transaction B, then A must wait until B has committed or aborted before it can continue.
 
-The key idea here is that a predicate lock applies even to objects that do not yet exist in the database, but which might be added in the future (phantoms). If two-phase locking includes predicate locks, the database prevents all forms of write skew and other race conditions, and so its isolation becomes serializable.
+The key idea here is that a **predicate lock applies even to objects that do not yet exist in the database**, but which might be added in the future (phantoms). If two-phase locking includes predicate locks, the database prevents all forms of write skew and other race conditions, and so its isolation becomes serializable.
 
 #### 7.3.2.3 Index-range locks
 
+Unfortunately, **predicate locks do not perform well**: if there are many locks by active transactions, checking for matching locks becomes time-consuming. For that reason, most databases with 2PL actually implement index-range locking (also known as **next-key locking**), which is a **simplified approximation** of predicate locking.
+
+It’s safe to simplify a predicate by making it match a greater set of objects. For example, if you have a predicate lock for bookings of room 123 between noon and 1 p.m., you can approximate it by locking bookings for room 123 at any time, or you can approximate it by locking all rooms (not just room 123) between noon and 1 p.m. This is safe, because any write that matches the original predicate will definitely also match the approximations.
+
+In the room bookings database you would probably have an index on the room_id column, and/or indexes on start_time and end_time (otherwise the preceding query would be very slow on a large database):
+
+1. Say your index is on room_id, and the database uses this index to find existing bookings for room 123. Now the database can simply attach a shared lock to this index entry, indicating that a transaction has searched for bookings of room 123.
+1. Alternatively, if the database uses a time-based index to find existing bookings, it can attach a shared lock to a range of values in that index, indicating that a transaction has searched for bookings that overlap with the time period of noon to 1 p.m. on January 1, 2018.
+
+Either way, an approximation of the search condition is attached to one of the indexes. Now, if another transaction wants to insert, update, or delete a booking for the same room and/or an overlapping time period, it will have to update the same part of the index. In the process of doing so, it will encounter the shared lock, and it will be forced to wait until the lock is released.
+
+This provides effective protection against phantoms and write skew. Index-range locks are not as precise as predicate locks would be (they may lock a bigger range of objects than is strictly necessary to maintain serializability), but since **they have much lower overheads, they are a good compromise**.
+
+If there is no suitable index where a range lock can be attached, the database can fall back to a shared lock on the entire table. This will not be good for performance, since it will stop all other transactions writing to the table, but it’s a safe fallback position.
+
 ### 7.3.3 Serializable Snapshot Isolation (SSI)
+
+This chapter has painted a bleak picture of concurrency control in databases. On the one hand, we have implementations of **serializability that don’t perform well (two-phase locking) or don’t scale well (serial execution)**. On the other hand, we have weak isolation levels that have good performance, but are prone to various race conditions (lost updates, write skew, phantoms, etc.). Are serializable isolation and good performance fundamentally at odds with each other?
+
+Perhaps not: an algorithm called **serializable snapshot isolation (SSI)** is very promising. It provides full serializability, but has only a small performance penalty compared to snapshot isolation. SSI is fairly new: it was first described in 2008 and is the subject of Michael Cahill’s PhD thesis [51].
+
+Today SSI is used both in **single-node** databases (the serializable isolation level in **PostgreSQL** since version 9.1) and distributed databases (**FoundationDB** uses a similar algorithm). As SSI is so young compared to other concurrency control mechanisms, it is still proving its performance in practice, but it has the possibility of being fast enough to become the new default in the future.
+
+#### 7.3.3.1 Pessimistic versus optimistic concurrency control
+
+Two-phase locking is a so-called **pessimistic** concurrency control mechanism: it is based on the principle that if anything might possibly go wrong (as indicated by a lock held by another transaction), it’s better to wait until the situation is safe again before doing anything. It is like **mutual exclusion**, which is used to protect data structures in multi-threaded programming.
+
+Serial execution is, in a sense, pessimistic to the extreme: it is essentially equivalent to each transaction having an exclusive lock on the entire database (or one partition of the database) for the duration of the transaction. We compensate for the pessimism by making each transaction very fast to execute, so it only needs to hold the “lock” for a short time.
+
+By contrast, serializable snapshot isolation is an **optimistic** concurrency control technique. Optimistic in this context means that instead of blocking if something potentially dangerous happens, transactions continue anyway, in the hope that everything will turn out all right. When a transaction wants to commit, the database **checks whether anything bad happened** (i.e., whether isolation was violated); if so, the transaction is aborted and has to be retried. Only transactions that executed serializably are allowed to commit.
+
+Optimistic concurrency control is an old idea, and its advantages and disadvantages have been debated for a long time. It **performs badly if there is high contention** (many transactions trying to access the same objects), as this leads to a high proportion of transactions needing to abort. If the system is already close to its maximum throughput, the additional transaction load from retried transactions can make performance worse.
+
+However, **if there is enough spare capacity**, and if contention between transactions is not too high, optimistic concurrency control techniques tend to perform better than pessimistic ones. Contention can be reduced with **commutative atomic operations**: for example, if several transactions concurrently want to increment a counter, it doesn’t matter in which order the increments are applied (as long as the counter isn’t read in the same transaction), so the concurrent increments can all be applied without conflicting.
+
+As the name suggests, SSI is based on snapshot isolation—that is, **all reads within a transaction are made from a consistent snapshot** of the database (see “Snapshot Isolation and Repeatable Read”). This is the main difference compared to earlier optimistic concurrency control techniques. On top of snapshot isolation, SSI adds an algorithm for **detecting serialization conflicts** among writes and determining which transactions to abort.
+
+#### 7.3.3.2 Decisions based on an outdated premise
+
+When we previously discussed write skew in snapshot isolation (see “Write Skew and Phantoms”), we observed a recurring pattern: a transaction reads some data from the database, examines the result of the query, and decides to take some action (write to the database) based on the result that it saw. However, under snapshot isolation, the result from the original query may no longer be up-to-date by the time the transaction commits, because the data may have been modified in the meantime.
+
+Put another way, the transaction is taking an action based on a premise (a fact that was true at the beginning of the transaction, e.g., “There are currently two doctors on call”). Later, when the transaction wants to commit, the original data may have changed—the premise may no longer be true.
+
+When the application makes a query (e.g., “How many doctors are currently on call?”), the database doesn’t know how the application logic uses the result of that query. To be safe, the database needs to assume that any change in the query result (the premise) means that writes in that transaction may be invalid. In other words, there may be a causal dependency between the queries and the writes in the transaction. In order to provide serializable isolation, the database must detect situations in which a transaction may have acted on an outdated premise and abort the transaction in that case.
+
+How does the database know if a query result might have changed? There are **two cases** to consider:
+
+1. Detecting reads of a stale MVCC object version (uncommitted write occurred before the read)
+1. Detecting writes that affect prior reads (the write occurs after the read)
+
+#### 7.3.3.2 Detecting stale MVCC reads
+
+Recall that snapshot isolation is usually implemented by **multi-version concurrency control** (MVCC; see Figure 7-10). When a transaction reads from a consistent snapshot in an MVCC database, it ignores writes that were made by any other transactions that hadn’t yet committed at the time when the snapshot was taken. In Figure 7-10, transaction 43 sees Alice as having on_call = true, because transaction 42 (which modified Alice’s on-call status) is uncommitted. However, by the time transaction 43 wants to commit, transaction 42 has already committed. This means that the write that was ignored when reading from the consistent snapshot has now taken effect, and transaction 43’s premise is no longer true.
+
+![](./7-10.detect.transaction.read.outdated.png)
+
+In order to prevent this anomaly, the database needs to **track when a transaction ignores another transaction’s writes due to MVCC visibility rules**. When the transaction wants to commit, the database **checks whether any of the ignored writes have now been committed**. If so, the transaction must be aborted.
+
+Why wait until committing? Why not abort transaction 43 immediately when the stale read is detected? Well, if transaction 43 was a read-only transaction, it wouldn’t need to be aborted, because there is no risk of write skew. At the time when transaction 43 makes its read, the database doesn’t yet know whether that transaction is going to later perform a write. Moreover, transaction 42 may yet abort or may still be uncommitted at the time when transaction 43 is committed, and so the read may turn out not to have been stale after all. By avoiding unnecessary aborts, SSI preserves snapshot isolation’s support for long-running reads from a consistent snapshot.
+
+#### 7.3.3.3 Detecting writes that affect prior reads
+
+The second case to consider is when another transaction modifies data after it has been read. This case is illustrated in Figure 7-11.
+
+![](./7-11.detect.modify.prior.reads.png)
+
+In the context of two-phase locking we discussed index-range locks (see “Index-range locks”), which allow the database to lock access to all rows matching some search query, such as `WHERE shift_id = 1234`. We can use a similar technique here, except that **SSI locks don’t block other transactions**.
+
+In Figure 7-11, transactions 42 and 43 both search for on-call doctors during shift 1234. If there is an index on `shift_id`, the database can use the index entry 1234 to record the fact that transactions 42 and 43 read this data. (If there is no index, this information can be tracked at the table level.) This information only needs to be kept for a while: after a transaction has finished (committed or aborted), and all concurrent transactions have finished, the database can forget what data it read.
+
+When a transaction writes to the database, it must look in the indexes for any other transactions that have recently read the affected data. This process is similar to acquiring a write lock on the affected key range, but rather than blocking until the readers have committed, the lock acts as a tripwire: it simply notifies the transactions that the data they read may no longer be up to date.
+
+In Figure 7-11, transaction 43 notifies transaction 42 that its prior read is outdated, and vice versa. Transaction 42 is first to commit, and it is successful: although transaction 43’s write affected 42, 43 hasn’t yet committed, so the write has not yet taken effect. However, when transaction 43 wants to commit, the conflicting write from 42 has already been committed, so 43 must abort.
+
+#### 7.3.3.4 Performance of serializable snapshot isolation
+
+As always, many engineering details affect how well an algorithm works in practice. For example, one trade-off is the granularity at which transactions’ reads and writes are tracked. If the database **keeps track of each transaction’s activity in great detail**, it can be precise about which transactions need to abort, but the **bookkeeping overhead** can become significant. Less detailed tracking is faster, but may lead to more transactions being aborted than strictly necessary.
+
+In some cases, it’s okay for a transaction to read information that was overwritten by another transaction: **depending on what else happened**, it’s sometimes possible to prove that the result of the execution is nevertheless serializable. PostgreSQL uses this theory to reduce the number of unnecessary aborts.
+
+Compared to two-phase locking, the **big advantage** of serializable snapshot isolation is that one transaction doesn’t need to block waiting for locks held by another transaction. Like under snapshot isolation, writers don’t block readers, and vice versa. This design principle makes query latency much more predictable and less variable. In particular, read-only queries can run on a consistent snapshot without requiring any locks, which is **very appealing for read-heavy workloads**.
+
+Compared to serial execution, serializable snapshot isolation is not limited to the throughput of a single CPU core: FoundationDB **distributes the detection of serialization conflicts across multiple machines**, allowing it to scale to very high throughput. Even though data may be partitioned across multiple machines, transactions can read and write data in multiple partitions while ensuring serializable isolation.
+
+The rate of aborts significantly affects the overall performance of SSI. For example, a transaction that reads and writes data over a long period of time is likely to run into conflicts and abort, so SSI requires that read-write transactions be fairly short (long-running read-only transactions may be okay). However, SSI is probably less sensitive to slow transactions than two-phase locking or serial execution.
+
 ## 7.4 Summary
+
+Transactions are an **abstraction layer** that allows an application to pretend that certain concurrency problems and certain kinds of hardware and software faults don’t exist. A large class of errors is reduced down to a simple transaction abort, and the application just needs to try again.
+
+In this chapter we saw many examples of problems that transactions help prevent. Not all applications are susceptible to all those problems: an application with very simple access patterns, such as reading and writing only a single record, can probably manage without transactions. However, for more complex access patterns, transactions can hugely reduce the number of potential error cases you need to think about.
+
+Without transactions, various error scenarios (processes crashing, network interruptions, power outages, disk full, unexpected concurrency, etc.) mean that data can become inconsistent in various ways. For example, denormalized data can easily go out of sync with the source data. Without transactions, it becomes very difficult to reason about the effects that complex interacting accesses can have on the database.
+
+In this chapter, we went particularly deep into the topic of concurrency control. We discussed several widely used isolation levels, in particular read committed, snapshot isolation (sometimes called repeatable read), and serializable. We characterized those isolation levels by discussing various examples of race conditions:
+
+**Dirty reads**
+
+One client reads another client’s writes before they have been committed. The **read committed isolation level** and stronger levels prevent dirty reads.
+
+**Dirty writes**
+
+One client overwrites data that another client has written, but not yet committed. Almost all transaction implementations prevent dirty writes.
+
+**Read skew** (nonrepeatable reads)
+
+A client sees different parts of the database at different points in time. This issue is most commonly prevented with **snapshot isolation**, which allows a transaction to read from a consistent snapshot at one point in time. It is usually implemented with multi-version concurrency control (MVCC).
+
+**Lost updates**
+
+Two clients concurrently perform a read-modify-write cycle. One overwrites the other’s write without incorporating its changes, so data is lost. Some implementations of **snapshot isolatio**n prevent this anomaly automatically, while others require a **manual lock** (`SELECT FOR UPDATE`).
+
+**Write skew**
+
+A transaction reads something, makes a decision based on the value it saw, and writes the decision to the database. However, by the time the write is made, the premise of the decision is no longer true. Only **serializable isolation** prevents this anomaly.
+
+**Phantom reads**
+
+A transaction reads objects that match some search condition. Another client makes a write that affects the results of that search. **Snapshot isolation** prevents straightforward phantom reads, but phantoms in the context of write skew require special treatment, such as **index-range locks**.
+
+Weak isolation levels protect against some of those anomalies but leave you, the application developer, to handle others manually (e.g., using explicit locking). Only serializable isolation protects against all of these issues. We discussed three different approaches to implementing serializable transactions:
+
+1. Literally executing transactions in a serial order. If you can make each transaction very fast to execute, and the transaction throughput is low enough to process on a single CPU core, this is a simple and effective option.
+1. Two-phase locking. For decades this has been the standard way of implementing serializability, but many applications avoid using it because of its performance characteristics.
+1. Serializable snapshot isolation (SSI). A fairly new algorithm that avoids most of the downsides of the previous approaches. It uses an optimistic approach, allowing transactions to proceed without blocking. When a transaction wants to commit, it is checked, and it is aborted if the execution was not serializable.
+
+The examples in this chapter used a relational data model. However, as discussed in “The need for multi-object transactions”, transactions are a valuable database feature, no matter which data model is used.
+
+In this chapter, we explored ideas and algorithms mostly in the context of a database running on a single machine. Transactions in distributed databases open a new set of difficult challenges, which we’ll discuss in the next two chapters.
+
+## 7.5 References
+
+[51]: Michael J. Cahill: “Serializable Isolation for Snapshot Databases,” PhD Thesis, University of Sydney, July 2009.
