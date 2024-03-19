@@ -489,7 +489,7 @@ The basic flow of 2PC is illustrated in Figure 9-9. Instead of a single commit r
 
 **Don’t confuse 2PC and 2PL**
 
-Two-phase commit (2PC) and  (see “ (2PL)”) are **two very different things**. 2PC provides atomic commit in a distributed database, whereas 2PL provides serializable isolation. To avoid confusion, it’s best to think of them as entirely separate concepts and to ignore the unfortunate similarity in the names.
+Two-phase commit (2PC) and  (see “(2PL)”) are **two very different things**. 2PC provides atomic commit in a distributed database, whereas 2PL provides serializable isolation. To avoid confusion, it’s best to think of them as entirely separate concepts and to ignore the unfortunate similarity in the names.
 
 2PC uses a new component that does not normally appear in single-node transactions: **a coordinator (also known as transaction manager)**. The coordinator is often implemented as a library within the same application process that is requesting the transaction (e.g., embedded in a Java EE container), but it can also be a separate process or service. Examples of such coordinators include Narayana, JOTM, BTM, or MSDTC.
 
@@ -558,7 +558,7 @@ Heterogeneous distributed transactions allow diverse systems to be integrated in
 
 If either the message delivery or the database transaction fails, both are aborted, and so the message broker may safely redeliver the message later. Thus, by atomically committing the message and the side effects of its processing, **we can ensure that the message is effectively processed exactly once**, even if it required a few retries before it succeeded. The abort discards any side effects of the partially completed transaction.
 
-Such a distributed transaction is only possible if all systems affected by the transaction are able to use t**he same atomic commit protocol**, however. For example, say a side effect of processing a message is to send an email, and the email server does not support two-phase commit: it could happen that the email is sent two or more times if message processing fails and is retried. But if all side effects of processing a message are rolled back on transaction abort, then the processing step can safely be retried as if nothing had happened.
+Such a distributed transaction is only possible if all systems affected by the transaction are able to use **the same atomic commit protocol**, however. For example, say a side effect of processing a message is to send an email, and the email server does not support two-phase commit: it could happen that the email is sent two or more times if message processing fails and is retried. But if all side effects of processing a message are rolled back on transaction abort, then the processing step can safely be retried as if nothing had happened.
 
 We will return to the topic of exactly-once message processing in Chapter 11. Let’s look first at the atomic commit protocol that allows such heterogeneous distributed transactions.
 
