@@ -15,5 +15,5 @@ Problems of simple hashing function `key % n` (`n` is the number of servers):
   - Move clockwise on the ring until finding the first cache it encounters.
 - When the hash table is resized (a server is added or deleted), only `k/n` keys need to be remapped (`k` is the total number of keys, and `n` is the total number of servers).
 - To handle hot spots, add “virtual replicas” for caches.
-  - Instead of mapping each cache to a single point on the ring, map it to multiple points on the ring (replicas). This way, each cache is associated with multiple portions of the ring.
+  - Instead of mapping each cache to a single point on the ring, map it to multiple points on the ring (replicas). That can be achieved by using multiple hash functions to hash the same cache server to multiple points on the ring. This way, each cache is associated with multiple portions of the ring.
   - If the hash function is “mixes well,” as the number of replicas increases, the keys will be more balanced.
