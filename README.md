@@ -1,6 +1,8 @@
-[Grokking System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
-====
-Source: [educative](https://www.educative.io)
+## References
+
+1. [Grokking System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
+1. [drawio](https://app.diagrams.net/), has aws icons
+
 
 ## Interview Process
 - Scope the problem
