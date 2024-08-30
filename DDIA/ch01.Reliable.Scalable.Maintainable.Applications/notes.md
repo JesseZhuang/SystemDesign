@@ -16,7 +16,7 @@ Influence factors
 1. skills and experience of people involved
 1. legacy system dependencies
 1. time-scale for delivery
-1. organization tolerance on differnt kinds of task
+1. organization tolerance on different kinds of task
 1. regulatory constraints
 
 ## 1.2 Reliability
@@ -28,9 +28,9 @@ Influence factors
 
 Continue to work correctly even when things go wrong. Fault-tolerant (certain types) or resilient.
 
-Fault is not the same as a failure [2]. Fault is usually one component only and failure is when the whole system stops providing the required service to the user. It's impossible to reduce fault probability to zero and usually best to prevent faults from causign failures.
+Fault is not the same as a failure [2]. Fault is usually one component only and failure is when the whole system stops providing the required service to the user. It's impossible to reduce fault probability to zero and usually best to prevent faults from causing failures.
 
-Many critical bugs are due to poor error handling [3]. Deliverately inducing faults can increase confidence and ensure fault-tolerance machinery is continually exercised and tested. The netflix chaos monkey [4] is an example.
+Many critical bugs are due to poor error handling [3]. Deliberately inducing faults can increase confidence and ensure fault-tolerance machinery is continually exercised and tested. The netflix chaos monkey [4] is an example.
 
 We generally prefer tolerating faults over preventing. Although for security matters prevention is better.
 
@@ -42,13 +42,13 @@ Our first response is usually to add redundancy. Disks may be set up in a RAID c
 
 Until recently, redundancy of hardware components was sufficient. As long as restore a backup onto a new machine fairly quickly, the downtime in case of failure is not catastrophic in most applications. Multi-machine redundancy was only required by a small number of applications.
 
-However, more applications have begin using larger number os machines, which proportionally increases the rate of hardware faults. Moreover, in some cloud platforms such as AWS it is common for virtual machine to become unavailable without warning [7], as the platforms are designed to prioritize flexibility and elasticity over single-machine reliability.
+However, more applications have begin using larger number of machines, which proportionally increases the rate of hardware faults. Moreover, in some cloud platforms such as AWS it is common for virtual machine to become unavailable without warning [7], as the platforms are designed to prioritize flexibility and elasticity over single-machine reliability.
 
 There is a move towards systems tolerating loss of entire machines, by using software fault-tolerance techniques in addition to hardware redundancy. Such system can tolerate machine failure can be patched one node at a time, without downtime (a rolling upgrade, chapter 4).
 
 ### 1.2.2 Software Errors
 
-Typically hardware faults are random and independent except for weak correlations: temperature in the server rack.
+Typically, hardware faults are random and independent except for weak correlations: temperature in the server rack.
 
 Another category is systematic error [8]. Such faults are harder to anticipate and because they are correlated across nodes, they will cause many more system failures than hardware faults [9]. Examples:
 
@@ -66,17 +66,17 @@ Lots of small things can help:
 1. process isolation
 1. allowing process to crash and restart
 1. measuring, monitoring, and analyzing behavior in prod
-1. constantly check gurantee (e.g., messaging system incoming messages == outgoing)
+1. constantly check guarantee (e.g., messaging system incoming messages == outgoing)
 
 
 ### 1.2.3 Human Errors
 
 One study found configuration errors by operators were the leading cause of outages, whereas hardware faults is 10-25% [13].
 
-- Design in a way to minimize opprotunities for error. Well-designed APIs, abstractions, and admin interfaces make it easy to do "the right thing". Balance not to be too strict so people will work around.
+- Design in a way to minimize opportunities for error. Well-designed APIs, abstractions, and admin interfaces make it easy to do "the right thing". Balance not to be too strict so people will work around.
 - Provide fully-featured non-production sandbox environments using real data without affecting real users.
-- Testing thoroughly. Unit tests, whole-system integration tests, and manual tests [3]. Automated tests is widely used, well understood, and sepecially valuable in covering corner cases rarely arise in normal operation.
-- Allow quick and easy recovery from human errors, minimize impact. Fast to roll back configuration chagnes, roll out new code gradually (unexpected bugs only affect a small subset of users), and provide tools to recompute data (old computation incorrect).
+- Testing thoroughly. Unit tests, whole-system integration tests, and manual tests [3]. Automated tests is widely used, well understood, and specially valuable in covering corner cases rarely arise in normal operation.
+- Allow quick and easy recovery from human errors, minimize impact. Fast to roll back configuration changes, roll out new code gradually (unexpected bugs only affect a small subset of users), and provide tools to recompute data (old computation incorrect).
 - Detailed and clear monitoring, performance and error rates, referred to as telemetry (after rocket launch [14]).
 - Implement good management practices and training
 
@@ -85,7 +85,7 @@ One study found configuration errors by operators were the leading cause of outa
 
 Consider a parent who stores pictures of videos of all children in your photo application [15]. Would they know how to restore from DB corruption?
 
-You may choose to sacrifice reliability to reduce develoment cost, e.g., when developing a prototype product for an unproven market. Or operational cost, e.g., for a service with a narrow profit margin. But should be conscious when cutting corners.
+You may choose to sacrifice reliability to reduce development cost, e.g., when developing a prototype product for an unproven market. Or operational cost, e.g., for a service with a narrow profit margin. But should be conscious when cutting corners.
 
 ## 1.3 Scalability
 
@@ -104,14 +104,14 @@ The best choice of load parameters depends on the system architecture:
 - perhaps average case
 - perhaps a number of extreme cases is the bottleneck
 
-Using twitter 2012 data as example [16].
+Using Twitter 2012 data as example [16].
 
 Two main operations:
 
 1. post tweet 4.6k avg, 12k peak QPS
 1. home timeline 300k QPS
 
-Handling 12k QPS tweet write is fairly easy. However, twitter's scaling challenge is due to fan-out (a term borrowed from electrical engineering, describing number of logic gate inputs connected to another gate's output. The output need to suplly enough current to drive all the attached inputs. In transaction processing systems, describing number of requests to other services in order to serve one imncoming request).
+Handling 12k QPS tweet write is fairly easy. However, twitter's scaling challenge is due to fan-out (a term borrowed from electrical engineering, describing number of logic gate inputs connected to another gate's output. The output need to supply enough current to drive all the attached inputs. In transaction processing systems, describing number of requests to other services in order to serve one incoming request).
 
 Broadly two ways to implement:
 
@@ -126,9 +126,9 @@ SELECT tweets.*, users.* FROM tweets
 
 2, Maintain a cache for timeline, insert new tweet to follower's caches.
 
-The first version of twitter used approach 1, but the systems struggled to keep up with the timeline queries. The average rate of published tweets is almost two orders of magnitude lower than the rate of timeline reads. It's preferrable to do more work at write time and less at read time.
+The first version of twitter used approach 1, but the systems struggled to keep up with the timeline queries. The average rate of published tweets is almost two orders of magnitude lower than the rate of timeline reads. It's preferable to do more work at write time and less at read time.
 
-On average, a tweet is delivered to avout 75 followers, so 4.6k QPS becomes 345k to the timeline caches. This average hides that number of followers varies wildly. Some users have over 30 million followers.
+On average, a tweet is delivered to about 75 followers, so 4.6k QPS becomes 345k to the timeline caches. This average hides that number of followers varies wildly. Some users have over 30 million followers.
 
 The distribution of followers per user (weighted by how often those users tweet) is a key load parameter for discussing scalability, since it determines the fan-out load.
 
@@ -139,9 +139,9 @@ Twitter is moving to a hybrid of the two approaches. Celebrities are excepted fr
 - when increase a load parameter and keep the system resources (cpu, memory, network bandwidth) unchanged, how is performance affected
 - when increase a load parameter, how much to increase the resources if you want to keep performance unchanged?
 
-In a batch processing system such as Hadoop, we usually care about throughput-number of records we can process per second, or the total time to run a job on a dataset of a certain size (in an ideal world, the running time of a batch job is the size of the dataset devided by the throughput. In practice, running time is often longer due to skew, where data is not spread evently across workers). In online systems, what's usually more important is the service's response time.
+In a batch processing system such as Hadoop, we usually care about **throughput**-number of records we can process per second, or the total time to run a job on a dataset of a certain size (in an ideal world, the **running time** of a batch job is the size of the dataset divided by the throughput. In practice, running time is often longer due to skew, where data is not spread evently across workers). In online systems, what's usually more important is the service's **response time**.
 
-Latency (the duration that a request is waiting to be handled) and response time (what the client sees, including network delays and queueing delays) are not the same. 
+Latency (the duration that a request is waiting to be handled) and response time (what the client sees, including network delays and queueing delays) **are not the same**. 
 
 Random additional latency can be introduced by
 
@@ -155,13 +155,13 @@ Median, 50th percentile, p50. Note if the user makes several requests over the c
 
 High percentiles of response times, also known as tail latencies are important because they directly affect users' experience. Customer with the slowest requests are often those who have the most data on their accounts because they have made many purchases, the most valuable customer [19]. Amazon has also observed that a 100 ms increase in response time reduces sales by 1% [20]. A 1-second slowdown reduces customer satisfaction metric by 16% [21],[22]. Optimizing the p99.99 percentile was deemed too expensive and to not yield enough benefit for Amazon's purposes.
 
-Percentiles are often used in service level objectives (SLOa) and service level agreements (SLAs). For example, the service is considered up if p50 < 200 ms and p99 is < 1 s. Availability is 99.9%.
+Percentiles are often used in service level objectives (SLOs) and service level agreements (SLAs). For example, the service is considered up if p50 < 200 ms and p99 is < 1 s. Availability is 99.9%.
 
 Queueing delays often account for a large part of the response time at high percentiles. It only takes a small number of slow requests to hold up the processing of subsequent requests, known as head-of-line blocking. 
 
-Even if only a small percentage of backend calls are slow, the chance of gettign a slow call increases if an end-user request requires multiple back-end calls, tail latency amplification.
+Even if only a small percentage of backend calls are slow, the chance of getting a slow call increases if an end-user request requires multiple back-end calls, tail latency amplification.
 
-You need to efficiently calculate response time percentiles. You may want to keep a rolling window of the last 10 minutes. The naive implementation is to keep a list and sort that list every minute. There are algorithms that can calculate a good approximation at minimal cpu and memory cost, such as forward decay [25], t-digest [26], or HdrHistogram [27]. Beaware that averaging percentiles, e.g., to reduce the time resolution or to combine data from several machines, is mathematically meaningless. The right way of aggregating response data is to add the histograms [28].
+You need to efficiently calculate response time percentiles. You may want to keep a rolling window of the last 10 minutes. The naive implementation is to keep a list and sort that list every minute. There are algorithms that can calculate a good approximation at minimal cpu and memory cost, **such as forward decay** [25], t-digest [26], or HdrHistogram [27]. Beware that averaging percentiles, e.g., to reduce the time resolution or to combine data from several machines, is mathematically meaningless. The right way of aggregating response data is to add the histograms [28].
 
 
 
