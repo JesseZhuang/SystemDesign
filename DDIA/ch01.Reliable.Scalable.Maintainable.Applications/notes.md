@@ -141,7 +141,7 @@ Twitter is moving to a hybrid of the two approaches. Celebrities are excepted fr
 
 In a batch processing system such as Hadoop, we usually care about **throughput**-number of records we can process per second, or the total time to run a job on a dataset of a certain size (in an ideal world, the **running time** of a batch job is the size of the dataset divided by the throughput. In practice, running time is often longer due to skew, where data is not spread evently across workers). In online systems, what's usually more important is the service's **response time**.
 
-Latency (the duration that a request is waiting to be handled) and response time (what the client sees, including network delays and queueing delays) **are not the same**. 
+Latency (the duration that a request is waiting to be handled) and response time (what the client sees, including network delays and queuing delays) **are not the same**. 
 
 Random additional latency can be introduced by
 
@@ -169,9 +169,9 @@ You need to efficiently calculate response time percentiles. You may want to kee
 
 An architecture appropriate for one level of load is unlikely to cope with 10 times that load.
 
-People often talk of a dichotomy between scalign up (vertical scaling, more powerful machine) and scaling out (horizontal scaling, multiple smaller machines). Distributing load across multiple machines is known as a shared-nothing architecture.
+People often talk of a dichotomy between scaling up (vertical scaling, more powerful machine) and scaling out (horizontal scaling, multiple smaller machines). Distributing load across multiple machines is known as a shared-nothing architecture.
 
-Some systems are elastic, whereas other systems are scaled manually. An elastic system can be useful if hoad is highly unpredicatable, but manually scaled sytems are simpler and may have fewer operational surprises.
+Some systems are elastic, whereas other systems are scaled manually. An elastic system can be useful if load is highly unpredictable, but manually scaled systems are simpler and may have fewer operational surprises.
 
 There is no magic scaling sauce, a generic one-size-fits-all scalable architecture. The problem may be
 
