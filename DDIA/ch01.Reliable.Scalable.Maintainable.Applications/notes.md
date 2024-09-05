@@ -202,7 +202,7 @@ Operations teams typically are responsible for following and more [29]:
 - establishing good practices and tools for deployment, configuration management, and more
 - performing complex maintenance tasks, such as moving an application from one platform to another
 - maintaining the security of the system as configuration changes are made
-- defining processes that make operations preditable and help keep the production environment stable
+- defining processes that make operations predictable and help keep the production environment stable
 - preserving the organization's knowledge about the system, even as individual people come and go
 
 ### 1.4.2 Simplicity: Managing Complexity
@@ -218,9 +218,9 @@ A software project mired in complexity is sometimes described as a big ball of m
 
 Mosley and Marks [32] define complexity as accidental if it is not inherent in the problem that the software solves but arises only from the implementation.
 
-One of the best tools we have for removing accidental complexity is abstraction. For example, high level programming languages are abstractionsthat hide machine code, CPU registers, and syscalls. SQL is an abstraction that hides complex on-disk and in-memory data structures, concurrent requests, and inconsistencies after crashes.
+One of the best tools we have for removing accidental complexity is abstraction. For example, high level programming languages are abstractions that hide machine code, CPU registers, and system calls. SQL is an abstraction that hides complex on-disk and in-memory data structures, concurrent requests, and inconsistencies after crashes.
 
-### 1.4.3 Evovability: Making Change Easy
+### 1.4.3 Evolvability: Making Change Easy
 
 - learn new facts
 - previously unanticipated use cases emerge
@@ -234,7 +234,7 @@ Agile working patterns provide a framework for adapting to change. For example, 
 
 ## 1.5 Summary
 
-Functional requirements: what it shold do, such as allowing data to be stored, retrieved, searched, and processed in various ways. 
+Functional requirements: what it should do, such as allowing data to be stored, retrieved, searched, and processed in various ways. 
 
 Non-functional requirements: general properties like security, reliability, compliance, scalability, compatibility, and maintainability.
 
