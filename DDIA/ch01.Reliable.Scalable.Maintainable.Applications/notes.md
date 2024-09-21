@@ -9,22 +9,22 @@ Many applications are data-intensive as opposed to compute-intensive.
 Many new tools no longer neatly fit into traditional categories [1].
 
 1. Redis, datastore also used as message queues
-1. Kafka, message queues with database-like durability
+2. Kafka, message queues with database-like durability
 
 Influence factors
 
 1. skills and experience of people involved
-1. legacy system dependencies
-1. time-scale for delivery
-1. organization tolerance on different kinds of task
-1. regulatory constraints
+2. legacy system dependencies
+3. time-scale for delivery
+4. organization tolerance on different kinds of task
+5. regulatory constraints
 
 ## 1.2 Reliability
 
 1. functional requirements
-1. tolerate user mistakes or using the software in unexpected ways
-1. performance under load and data volume
-1. prevents unauthorized access and abuse
+2. tolerate user mistakes or using the software in unexpected ways
+3. performance under load and data volume
+4. prevents unauthorized access and abuse
 
 Continue to work correctly even when things go wrong. Fault-tolerant (certain types) or resilient.
 
@@ -62,11 +62,11 @@ These bugs often lie dormant for a long time until triggered by an unusual set o
 Lots of small things can help:
 
 1. carefully thinking about assumptions and interactions
-1. thorough testing
-1. process isolation
-1. allowing process to crash and restart
-1. measuring, monitoring, and analyzing behavior in prod
-1. constantly check guarantee (e.g., messaging system incoming messages == outgoing)
+2. thorough testing
+3. process isolation
+4. allowing process to crash and restart
+5. measuring, monitoring, and analyzing behavior in prod
+6. constantly check guarantee (e.g., messaging system incoming messages == outgoing)
 
 
 ### 1.2.3 Human Errors
@@ -109,7 +109,7 @@ Using Twitter 2012 data as example [16].
 Two main operations:
 
 1. post tweet 4.6k avg, 12k peak QPS
-1. home timeline 300k QPS
+2. home timeline 300k QPS
 
 Handling 12k QPS tweet write is fairly easy. However, twitter's scaling challenge is due to fan-out (a term borrowed from electrical engineering, describing number of logic gate inputs connected to another gate's output. The output need to supply enough current to drive all the attached inputs. In transaction processing systems, describing number of requests to other services in order to serve one incoming request).
 

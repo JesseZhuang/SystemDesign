@@ -3,10 +3,9 @@
 Most applications are built by layering one data model on top of another. For each layer, the key question is: how is it represented in terms of the next lower layer. For example:
 
 1. As an application developer, you model the real word in terms of objects or data structures, and APIs that manipulate those data structures.
-1. You express the data structures in terms of a general-purpose data model, such as JSON or XML documents, tables in a relational database, or a graph model.
-1. The engineers who built your DB software decided on a way of representing that JSON/XML/relational/graph data in terms of bytes in memory, on disl, or on a network. The representation may allow query, search, manipulation, and processing in various ways.
-1. On yet lower levels, hardware engineers have figured out how to represent bytes in terms of electrical currents, pulses of light, magnetic fields, and more.
-
+2. You express the data structures in terms of a general-purpose data model, such as JSON or XML documents, tables in a relational database, or a graph model.
+3. The engineers who built your DB software decided on a way of representing that JSON/XML/relational/graph data in terms of bytes in memory, on disk, or on a network. The representation may allow query, search, manipulation, and processing in various ways.
+4. On yet lower levels, hardware engineers have figured out how to represent bytes in terms of electrical currents, pulses of light, magnetic fields, and more.
 
 Data model has a profound effect on what the software above it can and can't do, it's important to choose one appropriate.
 
@@ -25,32 +24,32 @@ Other databases at the time forced application developers to think a lot about t
 
 In the 1970s and early 1980s, the network model and the hierarchical model were the main alternatives, but the relational model came to dominate them. Object databases came and went again in the late 1980s and early 1990s. XML databases appeared in the early 2000s, but have only seen niche adoption.
 
-As computers became more powerful and networked, relational model continue to generalize well, beyond their original scope of business data processing, to a broad variety: online publishing, discusssion, social networking, .etc.
+As computers became more powerful and networked, relational model continue to generalize well, beyond their original scope of business data processing, to a broad variety: online publishing, discussion, social networking, .etc.
 
 ### 2.1.1 The Birth of NoSQL
 
-The name "NoSQL" is unfortunate, originally intended simply as a catchy Twitter hashtag for a meetup on open source, distributed, nonrelational databases in 2009 [3]. It has been retroactively reinterpreted as Not Only SQL [4].
+The name "NoSQL" is unfortunate, originally intended simply as a catchy Twitter hashtag for a meetup on open source, distributed, non-relational databases in 2009 [3]. It has been retroactively reinterpreted as Not Only SQL [4].
 
 Driving forces:
 
 1. Greater scalability than relational databases, including very large datasets or very high write throughput
-1. Widespread preference for free and open source software over commercial database products
-1. Specialized query opterations not well supported by the relational model
-1. Frustration with the restrictiveness of relational schemas, desire for a more dynamic and expressive data model
+2. Widespread preference for free and open source software over commercial database products
+3. Specialized query operations not well-supported by the relational model
+4. Frustration with the restrictiveness of relational schemas, desire for a more dynamic and expressive data model
 
 ### 2.1.2 The Object-Relational Mismatch
 
 The disconnect between the object-oriented model and the SQL data model is sometimes called an impedance mismatch (a term borrowed from electronics).
 
-Object-relational mapping (ORM) frameworks like ActiveRecord and Hibernate reduce boilerplate code required for the translation layer but they can't completely hide the differences between the two models.
+Object-relational mapping (ORM) frameworks like ActiveRecord and Hibernate reduce boilerplate code required for the translation layer, but they can't completely hide the differences between the two models.
 
-For a resume or a LinkedIn profile, the profile as a whole can be identified by a unique identifier, `user_id`. Fields like `first_name` and `last_name` can be columns on the `users` table. However, most people have had more than one job and varying numners of education. The one-to-many relationship can be represented:
+For a resume or a LinkedIn profile, the profile as a whole can be identified by a unique identifier, `user_id`. Fields like `first_name` and `last_name` can be columns on the `users` table. However, most people have had more than one job and varying numbers of education. The one-to-many relationship can be represented:
 
-1, In the traditional SQL (prior to SQL 1999), put positions, education, and contact information in separate tables, with a foreign key reference to the `users` table.
-1. Later versions of SQL added support for structured datatypes and XML, with support for querying and indexing inside those documents. These features are supported to varying degrees by Orable, IBM DB2, MS SQL Server, and PostegreSQL. A JSON datatype is also supported by some, including IBM DB2, MySQL, and PostgreSQL.
-1. A third options is to encode jobs as a JSON or XML, store as text column and let the application interpret structure and content. In this setup, you typically cannot use the database to query values inside that encoded column.
+1. In the traditional SQL (prior to SQL 1999), put positions, education, and contact information in separate tables, with a foreign key reference to the `users` table.
+2. Later versions of SQL added support for structured datatypes and XML, with support for querying and indexing inside those documents. These features are supported to varying degrees by Oracle, IBM DB2, MS SQL Server, and PostegreSQL. A JSON datatype is also supported by some, including IBM DB2, MySQL, and PostegreSQL.
+3. A third options is to encode jobs as a JSON or XML, store as text column and let the application interpret structure and content. In this setup, you typically cannot use the database to query values inside that encoded column.
 
-For a data structure like a resume, which is mostly a self-contained document, a JSON representation is quite appropriate. JSON has the appeal of much simper than XML. Document oriented databses like MongoDB, RethinkDB, CouchDB, and Espresso support this data model.
+For a data structure like a resume, which is mostly a self-contained document, a JSON representation is quite appropriate. JSON has the appeal of much simper than XML. Document oriented databases like MongoDB, RethinkDB, CouchDB, and Espresso support this data model.
 
 The JSON representation has better locality than the multi-table schema. If you want to fetch a profile in the relational example, you need to either perform multiple queries (query each table by `user_id`) or perform a messy multi-way join between the user table and its subordinate tables. In the JSON example, all the information is in one place and one query is enough.
 
@@ -62,15 +61,15 @@ The one-to-many relationships from the user to positions, contact info, and educ
 
 In previous example, `region_id` and `industry_id` are given as IDs, not plain-text strings.
 
-When you use an ID, the information meaningful to human is stored only at one-place. The advantage is the ID never has to change and since it is not meaningful to human. The info it identifies can change and ID remains the same. If the information is duplicated, all the redudant copies need to be updated. That incurs write overheads, and risks inconsistences (some copies updated and some not). Removing such duplication is the key idea of normalization in relational databses (The distinctions among the normal forms are of little practical impact. As a rule of thumb, duplicating values indicate the schema is not normalized).
+When you use an ID, the information meaningful to human is stored only at one-place. The advantage is the ID never has to change and since it is not meaningful to human. The info it identifies can change and ID remains the same. If the information is duplicated, all the redundant copies need to be updated. That incurs write overheads, and risks inconsistencies (some copies updated and some not). Removing such duplication is the key idea of normalization in relational databases (The distinctions among the normal forms are of little practical impact. As a rule of thumb, duplicating values indicate the schema is not normalized).
 
-Normalizing this data requires many-to-one relationships, which don't fit nicely into the document model. In document databases, joins are not needed for one-to-many tree structures, and support for joins is often weak (supported in RethinkDB, not in MongoDB, only supported in predeclared views in CouchDB). If the database does not support joins, you have to emulate joins in applicaiton code by making multiple queries.
+Normalizing this data requires many-to-one relationships, which don't fit nicely into the document model. In document databases, joins are not needed for one-to-many tree structures, and support for joins is often weak (supported in RethinkDB, not in MongoDB, only supported in predeclared views in CouchDB). If the database does not support joins, you have to emulate joins in application code by making multiple queries.
 
 Moreover, initial version of an application may fit well in a join-free document model. Data has a tendency of becoming more interconnected as features are added.
 
 ### 2.1.4 Are Document Databases Repeating History?
 
-The most popular database for business data processing in the 1970s was IBM's Information Management System (IMS), which used a fairly simple data model called he hirearchical model. It has some remarkable similarities to the JSON model used by document databases.
+The most popular database for business data processing in the 1970s was IBM's Information Management System (IMS), which used a fairly simple data model called he hierarchical model. It has some remarkable similarities to the JSON model used by document databases.
 
 Like document databases, IMS worked well for one-to-many relationships, but it made many-to-many relationships difficult, and did not support joins. Developers had to decide whether to duplicate (denormalize) data or to manually resolve references from one record to another. These problems of the 1960s and '70s were much like the problems with document databases today [15].
 
@@ -78,13 +77,13 @@ Various solutions were proposed to solve the limitations of the hierarchical mod
 
 **The network model**
 
-The network model was standarized by a committee called the Conference on Data Systems Languages (CODASYL). The CODASYL model was a generalization of the hirearchical model. In the tree structure of the hierarchical model, every record has exactly one parent; in the network model, a record could have multiple parents. This allowed many-to-one and many-to-many relationships to be modeled.
+The network model was standardized by a committee called the Conference on Data Systems Languages (CODASYL). The CODASYL model was a generalization of the hierarchical model. In the tree structure of the hierarchical model, every record has exactly one parent; in the network model, a record could have multiple parents. This allowed many-to-one and many-to-many relationships to be modeled.
 
 The links in the network model were not foreign keys but more like pointers (while still being stored on disk). The only way of accessing a record was to follow a path from a root record along these chains of links. This was called an access path. If a record had multiple parents, the application code had to keep track of all the various relationships. Even CODASYL committee members admitted that this was like navigating around an n-dimensional data space [17].
 
 **The relational model**
 
-The relational model lay out all the data in the open: a relation (table) is simply a collection of tuples (rows). You can insert a new row into any table without worring about foreign key relationships. Foreign key constraints allow to restrict modifications, but such constraints are not required by the relational model. Even with constraints, joins on foreign keys are performed at query time, whereas in CODASYL, the join was effectively done at insert time.
+The relational model lay out all the data in the open: a relation (table) is simply a collection of tuples (rows). You can insert a new row into any table without worrying about foreign key relationships. Foreign key constraints allow to restrict modifications, but such constraints are not required by the relational model. Even with constraints, joins on foreign keys are performed at query time, whereas in CODASYL, the join was effectively done at insert time.
 
 The "access path" are made automatically by the query optimizer, not by the application developer. If you want to query in new ways, you can declare a new index. You don't need to change your queries to take advantage of a new index. The relational model made it much easier to add new features to applications.
 
@@ -104,13 +103,13 @@ If the data in your application has a document-like structure (a tree of one-to-
 
 If your application does use many-to-many relationships, the document model becomes less appealing.
 
-For highly connected data, the document model is awkward, the relational model is acceptable, and graph models are the most natual.
+For highly connected data, the document model is awkward, the relational model is acceptable, and graph models are the most natural.
 
 **Schema flexibility in the document model**
 
 Most document databases, xml and json support in relational databases do not enforce schema or optional. Document databases are sometimes called schemaless, but that is misleading. There is an implicit schema not enforced by the database. A more accurate term is schema-on-read, in contrast with schema-on-write (traditional approach with relational databases).
 
-Schema-on-read is similar to dynamic (runtime) type checking in programming lan‐ guages, whereas schema-on-write is similar to static (compile-time) type checking. Just as the advocates of static and dynamic type checking have big debates about their relative merits [22], enforcement of schemas in database is a contentious topic, and in general there’s no right or wrong answer.
+Schema-on-read is similar to dynamic (runtime) type checking in programming languages, whereas schema-on-write is similar to static (compile-time) type checking. Just as the advocates of static and dynamic type checking have big debates about their relative merits [22], enforcement of schemas in database is a contentious topic, and in general there’s no right or wrong answer.
 
 The difference between the approaches is particularly noticeable in situations where an application wants to change the format of its data. The schema-on-read approach is advantageous if the items in the collection don’t all have the same structure for some reason (i.e., the data is heterogeneous)—for example, because:
 
@@ -133,7 +132,7 @@ A hybrid of the relational and document models is a good route for databases to 
 
 ## 2.2 Query Languages for Data
 
-Declarative languages often lend themselves to parallel execution. Imperative code is very hard to parallelize across mul‐ tiple cores and multiple machines, because it specifies instructions that must be per‐ formed in a particular order.
+Declarative languages often lend themselves to parallel execution. Imperative code is very hard to parallelize across multiple cores and multiple machines, because it specifies instructions that must be performed in a particular order.
 
 ### 2.2.1 Declarative Queries on the Web
 
@@ -145,9 +144,9 @@ MapReduce [33] is neither a declarative query language nor a fully imperative qu
 
 ## 2.3 Graph-Like Data Models
 
-If your application has mostly one-to-many relationships (tree-structured data) or no relationships between records, the document model is appropriate. The rela‐ tional model can handle simple cases of many-to-many relationships, but as the con‐ nections within your data become more complex, it becomes more natural to start modeling your data as a graph.
+If your application has mostly one-to-many relationships (tree-structured data) or no relationships between records, the document model is appropriate. The relational model can handle simple cases of many-to-many relationships, but as the connections within your data become more complex, it becomes more natural to start modeling your data as a graph.
 
-Graphs are not limited to such homogeneous data: an equally powerful use of graphs is to provide a consistent way of storing completely different types of objects in a single datastore. For example, Facebook maintains a single graph with many different types of vertices and edges: vertices represent people, locations, events, checkins, and comments made by users; edges indicate which people are friends with each other, which checkin hap‐ pened in which location, who commented on which post, who attended which event, and so on [35].
+Graphs are not limited to such homogeneous data: an equally powerful use of graphs is to provide a consistent way of storing completely different types of objects in a single datastore. For example, Facebook maintains a single graph with many different types of vertices and edges: vertices represent people, locations, events, checkins, and comments made by users; edges indicate which people are friends with each other, which checkin happened in which location, who commented on which post, who attended which event, and so on [35].
 
 In this section we will discuss the property graph model (implemented by Neo4j, Titan, and InfiniteGraph) and the triple-store model (implemented by Datomic, AllegroGraph, and others).
 
@@ -191,7 +190,7 @@ In Cypher, ``:WITHIN*0..`` expresses that fact very concisely: it means “follo
 
 ### 2.3.4 Triple-Stores and SPARQL
 
-The triple-store model is mostly equivalent to the property graph model. In a triple-store, all information is stored in the form of very simple three-part state‐ ments: (subject, predicate, object). For example, in the triple (Jim, likes, bananas), Jim is the subject, likes is the predicate (verb), and bananas is the object.
+The triple-store model is mostly equivalent to the property graph model. In a triple-store, all information is stored in the form of very simple three-part statements: (subject, predicate, object). For example, in the triple (Jim, likes, bananas), Jim is the subject, likes is the predicate (verb), and bananas is the object.
 
 ```
 _:lucy     :name   "Lucy".
@@ -202,15 +201,15 @@ _:idaho    :name   "Idaho".
 
 #### The semantic web
 
-The triple-store data model is completely independent of the semantic web—for example, Datomic [40] is a triple-store that does not claim to have anything to do with it. (Technically, Datomic uses 5-tuples rather than triples; the two additional fields are metadata for version‐ ing.) But the two are so closely linked in many people’s minds.
+The triple-store data model is completely independent of the semantic web—for example, Datomic [40] is a triple-store that does not claim to have anything to do with it. (Technically, Datomic uses 5-tuples rather than triples; the two additional fields are metadata for versioning.) But the two are so closely linked in many people’s minds.
 
 The semantic web is fundamentally a simple and reasonable idea: websites already publish information as text and pictures for humans to read, so why don’t they also publish information as machine-readable data for computers to read? The Resource Description Framework (RDF) [41] was intended as a mechanism for different websites to publish data in a consistent format, allowing data from different websites to be automatically combined into a web of data—a kind of internet-wide “database of everything.”
 
-So far it hasn't shown any sign of being realized in practice. There is also a lot of good work that has come out of the semantic web project. Triples can be a good internal data model for appli‐ cations, even if you have no interest in publishing RDF data on the semantic web.
+So far it hasn't shown any sign of being realized in practice. There is also a lot of good work that has come out of the semantic web project. Triples can be a good internal data model for applications, even if you have no interest in publishing RDF data on the semantic web.
 
 #### The RDF data model
 
-The Turtle language we used in Example 2-7 is a human-readable format for RDF data. Sometimes RDF is also written in an XML format, which does the same thing much more verbosely—see Example 2-8. Turtle/N3 is preferable as it is much easier on the eyes, and tools like Apache Jena can automatically convert between differ‐ ent RDF formats if necessary.
+The Turtle language we used in Example 2-7 is a human-readable format for RDF data. Sometimes RDF is also written in an XML format, which does the same thing much more verbosely—see Example 2-8. Turtle/N3 is preferable as it is much easier on the eyes, and tools like Apache Jena can automatically convert between different RDF formats if necessary.
 
 #### The SPARQL query language
 
@@ -238,13 +237,13 @@ No. They differ in several important ways:
 
 ### 2.3.5 The Foundation: Datalog
 
-In practice, Datalog is used in a few data systems: for example, it is the query lan‐ guage of Datomic [40], and Cascalog [47] is a Datalog implementation for querying large datasets in Hadoop. Datomic and Cascalog use a Clojure S-expression syntax for Datalog. Datalog define rules that tell the database about new predicates.The Datalog approach requires a different kind of thinking to the other query lan‐ guages discussed in this chapter, but it’s a very powerful approach, because rules can be combined and reused in different queries. It’s less convenient for simple one-off queries, but it can cope better if your data is complex.
+In practice, Datalog is used in a few data systems: for example, it is the query language of Datomic [40], and Cascalog [47] is a Datalog implementation for querying large datasets in Hadoop. Datomic and Cascalog use a Clojure S-expression syntax for Datalog. Datalog define rules that tell the database about new predicates.The Datalog approach requires a different kind of thinking to the other query languages discussed in this chapter, but it’s a very powerful approach, because rules can be combined and reused in different queries. It’s less convenient for simple one-off queries, but it can cope better if your data is complex.
 
 ## 2.4 Summary
 
 Historically, data started out being represented as one big tree (the hierarchical model), but that wasn’t good for representing many-to-many relationships, so the relational model was invented to solve that problem. More recently, developers found that some applications don’t fit well in the relational model either. New nonrelational “NoSQL” datastores have diverged in two main directions:
 
-1. Document databases target use cases where data comes in self-contained docu‐ ments and relationships between one document and another are rare.
+1. Document databases target use cases where data comes in self-contained documents and relationships between one document and another are rare.
 2. Graph databases go in the opposite direction, targeting use cases where anything is potentially related to everything.
 
 One thing that document and graph databases have in common is that they typically don’t enforce a schema for the data they store, which can make it easier to adapt applications to changing requirements. However, your application most likely still assumes that data has a certain structure; it’s just a question of whether the schema is explicit (enforced on write) or implicit (handled on read).
@@ -257,7 +256,7 @@ Although we have covered a lot of ground, there are still many data models left 
 
 <!-- references -->
 
-[1]: Edgar F. Codd: “A Relational Model of Data for Large Shared Data Banks,” Com‐ munications of the ACM, volume 13, number 6, pages 377–387, June 1970. doi: 10.1145/362384.362685
+[1]: Edgar F. Codd: “A Relational Model of Data for Large Shared Data Banks,” Communications of the ACM, volume 13, number 6, pages 377–387, June 1970. doi: 10.1145/362384.362685
 
 [3]: Pramod J. Sadalage and Martin Fowler: NoSQL Distilled. Addison-Wesley, August 2012. ISBN: 978-0-321-82662-6
 
@@ -277,11 +276,11 @@ Although we have covered a lot of ground, there are still many data models left 
 
 [28]: Donald K. Burleson: “Reduce I/O with Oracle Cluster Tables,” dba-oracle.com.
 
-[29]: Fay Chang, Jeffrey Dean, Sanjay Ghemawat, et al.: “Bigtable: A Distributed Stor‐ age System for Structured Data,” at 7th USENIX Symposium on Operating System Design and Implementation (OSDI), November 2006.
+[29]: Fay Chang, Jeffrey Dean, Sanjay Ghemawat, et al.: “Bigtable: A Distributed Storage System for Structured Data,” at 7th USENIX Symposium on Operating System Design and Implementation (OSDI), November 2006.
 
-[33]: Jeffrey Dean and Sanjay Ghemawat: “MapReduce: Simplified Data Processing on Large Clusters,” at 6th USENIX Symposium on Operating System Design and Imple‐ mentation (OSDI), December 2004.
+[33]: Jeffrey Dean and Sanjay Ghemawat: “MapReduce: Simplified Data Processing on Large Clusters,” at 6th USENIX Symposium on Operating System Design and Implementation (OSDI), December 2004.
 
-[35]: Nathan Bronson, Zach Amsden, George Cabrera, et al.: “TAO: Facebook’s Dis‐ tributed Data Store for the Social Graph,” at USENIX Annual Technical Conference (USENIX ATC), June 2013.
+[35]: Nathan Bronson, Zach Amsden, George Cabrera, et al.: “TAO: Facebook’s Distributed Data Store for the Social Graph,” at USENIX Annual Technical Conference (USENIX ATC), June 2013.
 
 [37]: “The Neo4j Manual v2.0.0,” Neo Technology, 2013.
 

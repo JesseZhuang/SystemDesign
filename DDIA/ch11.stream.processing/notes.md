@@ -401,12 +401,12 @@ Batch processing suffers from the same issues of reasoning about time. It is jus
 
 #### 11.3.2.4 Types of windows
 
-The window can be used for aggregtions, e.g., to count events or calculate average. Several types of windows are in common use:
+The window can be used for aggregations, e.g., to count events or calculate average. Several types of windows are in common use:
 
 1. tumbling window, fixed length, rounding down to nearest minute
-1. hopping window, fixed length, allow overlap, e.g., 5-min window with a hop size of 1 min would cover 10:03:00-10:07:59 and the next 10:04:00-10:08:59. You can implement hopping window by calculating 1-min tubling windows then aggregating over several adjacent windows.
-1. sliding window, 5-min sliding window cover 10:03:39 and 10:08:12, because they are less than 5 min apart (note tumbling and hopping 5-min windows would not have put the two in the same window as they use fixed boundaries). can be implemented by keeping a buffer of events sorted by time and removing old events when they expire.
-1. session window, no fixed duration. grouping all events for the same user occur closely together in time. window ends when the user has been inactive for some time, e.g., no events for 30 min. Sessionization is common requirement for website analytics (see group by on p406).
+2. hopping window, fixed length, allow overlap, e.g., 5-min window with a hop size of 1 min would cover 10:03:00-10:07:59 and the next 10:04:00-10:08:59. You can implement hopping window by calculating 1-min tumbling windows then aggregating over several adjacent windows.
+3. sliding window, 5-min sliding window cover 10:03:39 and 10:08:12, because they are less than 5 min apart (note tumbling and hopping 5-min windows would not have put the two in the same window as they use fixed boundaries). can be implemented by keeping a buffer of events sorted by time and removing old events when they expire.
+4. session window, no fixed duration. grouping all events for the same user occur closely together in time. window ends when the user has been inactive for some time, e.g., no events for 30 min. Sessionization is common requirement for website analytics (see group by on p406).
 
 ### 11.3.3 Stream Joins
 
