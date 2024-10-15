@@ -184,7 +184,7 @@ There are several possible ways of executing the query. The description given he
 
 ### 2.3.3 Graph Queries in SQL
 
-Graph data can be represented in a relational database. In a relational database, you usually know in advance which joins you need in your query. In a graph query, you may need to traverse a variable number of edges before you find the vertex you’re looking for— that is, the number of joins is not fixed in advance.
+Graph data can be represented in a relational database. In a relational database, you usually know in advance which joins you need in your query. In a graph query, you may need to traverse a variable number of edges before you find the vertex you’re looking for—that is, the number of joins is not fixed in advance.
 
 In Cypher, ``:WITHIN*0..`` expresses that fact very concisely: it means “follow a WITHIN edge, zero or more times.” It is like the `*` operator in a regular expression. Since SQL:1999, this idea of variable-length traversal paths in a query can be expressed using something called recursive common table expressions (the WITH RECURSIVE syntax). The same query is 4 lines in Cyper and 29 lines in SQL.
 
@@ -224,7 +224,7 @@ SELECT ?personName WHERE {
 }
 ```
 
-The same query as before—finding people who have moved from the US to Europe— is even more concise in SPARQL than it is in Cypher.
+The same query as before—finding people who have moved from the US to Europe—is even more concise in SPARQL than it is in Cypher.
 
 We discussed how CODASYL and the relational model competed to solve the problem of many-to-many relationships in IMS. At first glance, CODASYL’s network model looks similar to the graph model. Are graph databases the second coming of CODASYL in disguise?
 
@@ -241,7 +241,7 @@ In practice, Datalog is used in a few data systems: for example, it is the query
 
 ## 2.4 Summary
 
-Historically, data started out being represented as one big tree (the hierarchical model), but that wasn’t good for representing many-to-many relationships, so the relational model was invented to solve that problem. More recently, developers found that some applications don’t fit well in the relational model either. New nonrelational “NoSQL” datastores have diverged in two main directions:
+Historically, data started out being represented as one big tree (the hierarchical model), but that was not good for representing many-to-many relationships, so the relational model was invented to solve that problem. More recently, developers found that some applications don’t fit well in the relational model either. New non-relational “NoSQL” datastores have diverged in two main directions:
 
 1. Document databases target use cases where data comes in self-contained documents and relationships between one document and another are rare.
 2. Graph databases go in the opposite direction, targeting use cases where anything is potentially related to everything.
@@ -250,8 +250,8 @@ One thing that document and graph databases have in common is that they typicall
 
 Although we have covered a lot of ground, there are still many data models left unmentioned. To give just a few brief examples:
 1. Researchers working with genome data often need to perform sequence-similarity searches, which means taking one very long string (representing a DNA molecule) and matching it against a large database of strings that are similar, but not identical. None of the databases described here can handle this kind of usage, which is why researchers have written specialized genome database software like GenBank.
-1. Particle physicists have been doing Big Data–style large-scale data analysis for decades, and projects like the Large Hadron Collider (LHC) now work with hundreds of petabytes! At such a scale custom solutions are required to stop the hardware cost from spiraling out of control.
-1. Full-text search is arguably a kind of data model that is frequently used alongside databases. Information retrieval is a large specialist subject that we won’t cover in great detail in this book, but we’ll touch on search indexes in Chapter 3 and Part III.
+2. Particle physicists have been doing Big Data–style large-scale data analysis for decades, and projects like the Large Hadron Collider (LHC) now work with hundreds of petabytes! At such a scale custom solutions are required to stop the hardware cost from spiraling out of control.
+3. Full-text search is arguably a kind of data model that is frequently used alongside databases. Information retrieval is a large specialist subject that we won’t cover in great detail in this book, but we’ll touch on search indexes in Chapter 3 and Part III.
 
 
 <!-- references -->

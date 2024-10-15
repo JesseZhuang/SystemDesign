@@ -254,7 +254,7 @@ Non-functional requirements: general properties like security, reliability, comp
 
 [25]: Graham Cormode, Vladislav Shkapenyuk, Divesh Srivastava, and Bojian Xu: “Forward Decay: A Practical Time Decay Model for Streaming Systems,” at 25th IEEE International Conference on Data Engineering (ICDE), March 2009.
 
-[26]: Ted Dunning and Otmar Ertl: “Computing Extremely Accurate Quantiles Using t-Digests,” github.com, March 2014.
+[26]: Ted Dunning and Otmar Ertl: “Computing Extremely Accurate Quantiles Using t-Digests,” GitHub.com, March 2014.
 
 [27]: Gil Tene: “HdrHistogram,” hdrhistogram.org.
 
