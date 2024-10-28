@@ -62,7 +62,7 @@ If limit 10 requests per second, 10M QPS. Can use redis or memcached distributed
 
 ## Sliding Window
 
-Data: userid -> SortedSet()
+Data: userid -> Redis SortedSet() of timestamps
 
 ```
 while ss[0]<time-1min: ss.pop(index=0)
@@ -99,3 +99,8 @@ User: Rate limiting can be done on APIs after user authentication. Once authenti
 
 How about if we combine the above two schemes?
 Hybrid: A right approach could be to do both per-IP and per-user rate limiting, as they both have weaknesses when implemented alone, though, this will result in more cache entries with more details per entry, hence requiring more memory and storage.
+
+## References
+
+1. Grokking system design
+2. 
