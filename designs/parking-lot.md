@@ -112,10 +112,19 @@ strongly consistent: read lock on the reservation spot, based on location
  
 ![](../img/parking-lot1.png)
 
+### GFG
+
+![](../img/parking-lot2.jpg)
+
+![](../img/parking-lot3.jpg)
+
+![](../img/parking-lot.flow.webp)
+
 ## References
 
 1. https://www.youtube.com/watch?v=NtMvNh0WFVM
 2. https://iq.opengenus.org/system-design-for-parking-lot/
-3. OOD: https://techbyexample.com/parking-lot-system-design/, doubly linked list
-4. OOD: https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/
-5. https://medium.com/double-pointer/system-design-interview-parking-lot-system-ff2c58167651
+3. https://www.geeksforgeeks.org/designing-parking-lot-garage-system-system-design/
+4. OOD: https://techbyexample.com/parking-lot-system-design/, doubly linked list
+5. OOD: https://www.geeksforgeeks.org/design-parking-lot-using-object-oriented-principles/
+6. https://medium.com/double-pointer/system-design-interview-parking-lot-system-ff2c58167651
