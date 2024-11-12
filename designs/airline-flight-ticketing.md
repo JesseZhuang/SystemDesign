@@ -10,6 +10,7 @@ Functional
 
 1. Browse available flights, book flight, select seat while booking
 2. out of scope (logistics). only handle single source single destination
+3. (Circle) Design an booking engine to book cheapest flight ticket given origin, destination, date.
 
 Iterations
 

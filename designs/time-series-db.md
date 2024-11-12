@@ -4,6 +4,34 @@
 
 Circle
 
+### Requirements
+
+1. Data stream input every 10ms, how to handle the huge amount of data for longer time periods.
+2. collection and request APIs to save data and respond to client queries based on time
+
+## Time series DB
+
+1. InfluxDB
+2. TimescaleDB
+3. Apache Druid
+
+TimescaleDB youtube talk.
+
+People say they have 200 time series in that domain. Number of time series: combinatorics of the unique tags. Relations between the different metrics is important as well as metric metadata. People store time series data in one database and relational in another. 68% were using NoSQL. TimescaleDB provides full SQL: window, join, subquery, CTE. 100x billions rows per node. Speaks PostgreSQL. OLTP primarily updates, random distributed, transactions to multiple primary keys. Time series primarily inserts, writes to recent time interval, associated with a timestamp and a primary key (append heavy). Hypertable contains chunks (internal table in PostgreSQL, still supports index, trigger, constraint, UPSERT, and table management. Time on Y axis and Space (hash partitioning) on X axis. Automatically generate partition every a few minutes and total 10s of 1000s of partitions. Customer inserted 500B rows single table single node 400K rows per second, 50K chunks, 5min intervals.
+
+Chunking benefits: right-sized (recent chunks fit in memory, update in memory), efficient retention policies (drop chunks, fragmentation, avoids vacuuming), single node scaling up via adding disks (faster insert, parallelized queries), multi-node scaling out via existing mechanisms (distributed query optimizations), chunk-aware query optimizations (avoid querying chunks via constrain exclusion 50k children vs 50 children nodes), less operational overhead, rich time analytics (`udf: time_bucket(), last()`; geospatial temporal analysis), data retention and aggregation (sloppy with late data, old 5min interval).
+
+Performance benefits:
+
+1. single row inserts 144k metrics/s vs 14.4 k inserts/s (PostgreSQL). 1.11M metrics/s (20x).
+2. table scan, 20%, group by 2x, time ordered group by, 400-10k x, delete 2000x.
+3. 50 k partitions per node
+4. insert rate 10x vs cassandra, last point(IOT) 1400x.
+
+PostgreSQL does not handle well `now()- interval 24 hours` due to time delay in prepare and query execution.
+
+PostgreSQL can allow modifying query planner. MySQL allow different storage engines.
+
 ## Pinterest Goku
 
 ### Time Series Data
@@ -86,3 +114,5 @@ Analytics is widely needed for all industries and Pinterest is no exception. Que
 
 1. https://medium.com/pinterest-engineering/goku-building-a-scalable-and-high-performant-time-series-database-system-a8ff5758a181
 2. https://opentsdb.net/docs/build/html/user_guide/query/index.html
+3. Jordan has no life SD https://www.youtube.com/watch?v=_pZ7VNO1UDs&t=379s
+4. TimescaleDB talk https://www.youtube.com/watch?v=eQKbbCg0NqE&t=1437s
