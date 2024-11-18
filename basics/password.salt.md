@@ -13,3 +13,4 @@ hash(password+salt): store in database (id,salt,hash)
 
 1. byte byte go YouTube video
 2. https://en.wikipedia.org/wiki/Salt_(cryptography)
+3. https://newsletter.systemdesign.one/p/how-to-store-passwords-in-database
