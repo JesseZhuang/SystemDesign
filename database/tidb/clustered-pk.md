@@ -31,11 +31,11 @@ If you omit the keyword, `tidb_enable_clustered_index` determines the layout. A 
 
 ## Choosing a layout
 
-**Clustered is usually the best fit** when the PK is well distributed, such as a UUID stored as `BINARY(16)` or a hash, or when you use `AUTO_RANDOM`. PK lookups and range scans read the rows directly. A sequential clustered PK can create a write hotspot.
+**Clustered is usually the best fit** when the PK is well distributed, such as a UUID stored as `BINARY(16)` or a hash, or when you use `AUTO_RANDOM`. PK lookups and range scans read the rows directly. For example, a high-write event table can use `AUTO_RANDOM` IDs and fetch events by ID. A sequential clustered PK can create a write hotspot.
 
 Choose **nonclustered** when:
 
-- The PK is wide, such as a long string or composite key, and the table has several secondary indexes. Each secondary index stores the PK value; storing the 8-byte row ID instead can reduce index size.
+- The PK is wide and the table has several secondary indexes. For example, a legacy `customers` table with a wide external customer code as its PK and indexes on email and status stores an 8-byte row ID in each secondary index instead of the wide PK.
 - The PK is sequential but cannot use `AUTO_RANDOM`, such as an externally assigned ordered string. `SHARD_ROW_ID_BITS` can distribute hidden row IDs.
 - You need to drop or replace the PK. A nonclustered PK is a separate index; a clustered PK is the row key and requires rebuilding the table to change.
 
